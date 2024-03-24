@@ -1,23 +1,16 @@
 # WARNING! Update this macro before deploy
 PROJECT = etapa1
 
-IDIR =./include
 CC=gcc
-CFLAGS=-I$(IDIR)
+CFLAGS=-I.
 
-ODIR=obj
-CDIR=src
+# You MUST list all `header` files here
+DEPS =
 
-# You MUST list all header files here
-_DEPS =
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+# You MUST list all `object` files here
+OBJ = main.o 
 
-# You MUST list all object files here
-_OBJ = main.o 
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
-
-
-$(ODIR)/%.o: $(CDIR)/%.c $(DEPS)
+%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(PROJECT): $(OBJ)
@@ -28,7 +21,11 @@ $(PROJECT): $(OBJ)
 .PHONY: deploy
 
 deploy:
-	rm -f $(PROJECT).tgz
-	rm -f $(ODIR)/*.o
+	rm -f *.o
 	rm -f $(PROJECT)
-	tar cvzf $(PROJECT).tgz .
+	tar cvzf deploy/$(PROJECT).tgz\
+	 --exclude=.git\
+	 --exclude=deploy\
+	 --exclude=README.md\
+	 --exclude=.gitignore\
+	 .
