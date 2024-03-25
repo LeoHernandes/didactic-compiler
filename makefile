@@ -5,16 +5,21 @@ CC=gcc
 CFLAGS=-I.
 
 # You MUST list all `header` files here
-DEPS =
+DEPS = tokens.h
 
 # You MUST list all `object` files here
-OBJ = main.o 
+OBJ = main.o lex.yy.c
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+all: scanner $(PROJECT)
+
+scanner: scanner.l
+	flex scanner.l
 
 $(PROJECT): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 # --------------
 # RECIPES ONLY:
