@@ -1,36 +1,44 @@
 # WARNING! Update this macro before deploy
 PROJECT = etapa1
 
+IDIR =./include
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I$(IDIR)
 
-# You MUST list all `header` files here
-DEPS = tokens.h
+ODIR=obj
+CDIR=src
 
-# You MUST list all `object` files here
-OBJ = main.o lex.yy.c
+# You MUST list all header files here
+_DEPS = tokens.h
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+
+# You MUST list all object files here
+_OBJ = main.o lex.yy.o
+OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 all: scanner $(PROJECT)
 
-scanner: scanner.l
-	flex scanner.l
+scanner: $(CDIR)/scanner.l
+	flex -o $(CDIR)/lex.yy.c $(CDIR)/scanner.l
+
+$(ODIR)/%.o: $(CDIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(PROJECT): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
-
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
 
 # --------------
 # RECIPES ONLY:
 .PHONY: deploy
 
 deploy:
-	rm -f *.o
+	rm -f $(ODIR)/*.o
+	rm -f deploy/*.tgz
 	rm -f $(PROJECT)
 	tar cvzf deploy/$(PROJECT).tgz\
 	 --exclude=.git\
 	 --exclude=deploy\
+	 --exclude=obj\
 	 --exclude=README.md\
 	 --exclude=.gitignore\
 	 .
