@@ -32,6 +32,26 @@ letter_ [a-z_]
 "true" {return TK_LIT_TRUE;}
 {letter_}({letter_}|{digit})* {return TK_IDENTIFICADOR;}
 
+"-" {return '-';}
+"!" {return '!';}
+"*" {return '*';}
+"/" {return '/';}
+"%" {return '%';}
+"+" {return '+';}
+"<" {return '<';}
+">" {return '>';}
+"{" {return '{';}
+"}" {return '}';}
+"(" {return ')';}
+")" {return ')';}
+"=" {return '=';}
+"," {return ',';}
+";" {return ';';}
+
+\/\/.*\n
+
+\/\*.*\*\/
+
 . {return TK_ERRO;}
 
 %%
