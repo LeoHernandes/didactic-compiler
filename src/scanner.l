@@ -5,6 +5,7 @@
 %option yylineno
 
 %x digit letter_ number
+%x comment
 
 digit [0-9]
 letter_ [a-z_]
@@ -42,15 +43,20 @@ letter_ [a-z_]
 ">" {return '>';}
 "{" {return '{';}
 "}" {return '}';}
-"(" {return ')';}
+"(" {return '(';}
 ")" {return ')';}
 "=" {return '=';}
 "," {return ',';}
 ";" {return ';';}
 
-\/\/.*\n
+\/\/.*$ 
 
-\/\*.*\*\/
+"/*"                BEGIN(comment);
+<comment>[^*\n]*
+<comment>[^*\n]*\n  
+<comment>"*"+"/"    BEGIN(INITIAL);
+
+[" "|\n]
 
 . {return TK_ERRO;}
 
