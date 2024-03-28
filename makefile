@@ -20,6 +20,7 @@ all: scanner $(PROJECT)
 
 scanner: $(CDIR)/scanner.l
 	flex -o $(CDIR)/lex.yy.c $(CDIR)/scanner.l
+	$(CC) -c $(CDIR)/lex.yy.c -o $(ODIR)/lex.yy.o $(CFLAGS)
 
 $(ODIR)/%.o: $(CDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -29,16 +30,22 @@ $(PROJECT): $(OBJ)
 
 # --------------
 # RECIPES ONLY:
-.PHONY: deploy
 
-deploy:
+.PHONY: clean
+clean:
 	rm -f $(ODIR)/*.o
 	rm -f deploy/*.tgz
 	rm -f $(PROJECT)
+	rm -f $(CDIR)/lex.yy.c
+
+.PHONY: deploy
+deploy:
+	make clean
 	tar cvzf deploy/$(PROJECT).tgz\
 	 --exclude=.git\
 	 --exclude=deploy\
 	 --exclude=obj\
 	 --exclude=README.md\
 	 --exclude=.gitignore\
+	 --exclude=tests\
 	 .

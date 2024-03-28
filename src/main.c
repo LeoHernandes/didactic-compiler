@@ -23,7 +23,7 @@ int print_token (int token);
 
 int main (int argc, char **argv) {
   int token = 0, retorno = 0;
-  while ((token = yylex()) && retorno == 0) {
+  while (retorno == 0 && (token = yylex())) {
     retorno = print_token(token);
   }
   yylex_destroy();

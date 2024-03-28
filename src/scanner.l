@@ -1,3 +1,8 @@
+/* Desenvolvido pelo Grupo K
+    - LEO HERNANDES DE VASCONCELOS - 323961
+    - VITOR CARUSO RODRIGUES FERRER - 327023
+*/
+
 %{
 #include "tokens.h"
 %}
