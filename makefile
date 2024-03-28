@@ -48,4 +48,5 @@ deploy:
 	 --exclude=README.md\
 	 --exclude=.gitignore\
 	 --exclude=tests\
+	 --exclude=.vscode\
 	 .
