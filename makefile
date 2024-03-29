@@ -44,7 +44,6 @@ deploy:
 	tar cvzf deploy/$(PROJECT).tgz\
 	 --exclude=.git\
 	 --exclude=deploy\
-	 --exclude=obj\
 	 --exclude=README.md\
 	 --exclude=.gitignore\
 	 --exclude=tests\
