@@ -4,7 +4,7 @@
 */
 
 %{
-    #include "tokens.h"
+    #include "parser.tab.h"
 %}
 
 /* Stops processing after EOF */

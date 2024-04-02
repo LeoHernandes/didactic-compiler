@@ -1,5 +1,5 @@
 # WARNING! Update this macro before deploy
-PROJECT = etapa1
+PROJECT = etapa2
 
 IDIR =./include
 CC=gcc
@@ -9,18 +9,22 @@ ODIR=obj
 CDIR=src
 
 # You MUST list all header files here
-_DEPS = tokens.h
+_DEPS = parser.tab.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # You MUST list all object files here
-_OBJ = main.o lex.yy.o
+_OBJ = main.o lex.yy.o parser.tab.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-all: scanner $(PROJECT)
+all: scanner parser $(PROJECT)
 
-scanner: $(CDIR)/scanner.l
+scanner: parser $(CDIR)/scanner.l
 	flex -o $(CDIR)/lex.yy.c $(CDIR)/scanner.l
 	$(CC) -c $(CDIR)/lex.yy.c -o $(ODIR)/lex.yy.o $(CFLAGS)
+
+parser: $(CDIR)/parser.y
+	bison -o $(CDIR)/parser.tab.c --defines=$(IDIR)/parser.tab.h $(CDIR)/parser.y 
+	$(CC) -c $(CDIR)/parser.tab.c -o $(ODIR)/parser.tab.o $(CFLAGS)
 
 $(ODIR)/%.o: $(CDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)

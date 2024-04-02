@@ -1,5 +1,6 @@
 deploy/*.tgz
 obj/*.o
 lex.yy.c
+parser.tab.*
 .vscode/
-etapa1
+etapa*
