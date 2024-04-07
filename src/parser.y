@@ -26,7 +26,13 @@ void yyerror (char const *mensagem);
 
 %%
 
-programa:
+program: elements_list | ;
+elements_list : elements_list element | element;
+element : global_declaration | function_declaration;
+global_declaration: type variables_list ',';
+type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
+variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
+function_declaration: TK_LIT_FALSE;
 
 %%
 
