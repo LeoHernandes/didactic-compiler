@@ -1,14 +1,45 @@
-/* essa funcao pipipipopopo
-    uma locura
-    UUUUUUOOOOOOOOOO
-*/
-int main(){
-    // um loopzao aqui
-    int i = 0;
-    while(i != 10)
-    {
-        i = i + 1;
-    }
+int i1; i2; i3,
+float f1,
+bool b1;b2,
 
-    return 0; // aqui acabou
+(int param1) | int/times_two {
+	return param1 * 2,
+}
+
+(int param1; float param2; bool param3) | float/return_float {
+	return param2,
+}
+
+() | bool/always_true {
+	return true,
+}
+/* comentarioooooo
+wowwwwwww
+*/
+
+(int param1) | bool/all {
+	int i5; i6,
+	float f2,
+	bool b3,
+	
+	i5 = 2,
+	f2 = return_float(4.0),
+	b3 = always_true(),
+	
+	i6 = times_two(((i5 + i5) * i5) - i5; f2; b3),
+	
+	if (b3 == true){
+		i5 = 4,
+	}
+	else {
+		i5 = 6,
+	} 
+	
+	if (i5 == 4){
+	  	f2 = f2 * 2.5,
+	}
+	while (b3 == true){
+		b3 = false,
+	}
+	return true,
 }
