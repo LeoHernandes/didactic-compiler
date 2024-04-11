@@ -26,14 +26,27 @@ void yyerror (char const *mensagem);
 
 %%
 
+    /* Program generic structure */
 program: elements_list | ;
 elements_list : elements_list element | element;
 element : global_declaration | function_declaration;
-global_declaration: type variables_list ',';
-type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
-variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
-function_declaration: TK_LIT_FALSE;
 
+    /* Global declaration */
+global_declaration: type variables_list ',';
+variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
+
+    /* Function declaration */
+function_declaration: function_header | function_body ;
+function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR ;
+function_parameters: '(' parameters_list ')' | '(' ')' ; 
+parameters_list: parameters_list ';' type TK_IDENTIFICADOR | type TK_IDENTIFICADOR ;  
+function_body: command_block ;
+
+    /* Commands */
+command_block: '{' TK_LIT_FALSE '}'
+
+    /* Primitives types */
+type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
 %%
 
 #include <stdio.h>
