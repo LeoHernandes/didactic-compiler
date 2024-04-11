@@ -18,7 +18,7 @@
 
 digit [0-9]
 letter_ [a-z_]
-blank [ \n\r]
+blank [ \t\n\r]
 special_characters [-!*/%+<>{}()=,;]
 single_line_comment \/\/.*
 
