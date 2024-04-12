@@ -66,7 +66,53 @@ else_command: TK_PR_ELSE command_block ;
 while_command: TK_PR_WHILE '(' expression ')' command_block ;
 
     /* Expressions */
-expression: TK_LIT_TRUE ;
+
+expression: expr_or ;
+expr_or: expr_or TK_OC_OR expr_and | expr_and ;          /* 7: OR  */
+expr_and: expr_and TK_OC_AND expr_eq_ne | expr_eq_ne ;   /* 6: AND */
+expr_eq_ne:
+  expr_eq_ne TK_OC_EQ expr_comparisons                   /* 5: EQUAL     */
+| expr_eq_ne TK_OC_NE expr_comparisons                   /* 5: NOT EQUAL */
+| expr_comparisons
+;
+
+expr_comparisons:
+  expr_comparisons TK_OC_GE expr_plus_minus    /* 4: GREATER OR EQUAL */
+| expr_comparisons TK_OC_LE expr_plus_minus    /* 4: LESS OR EQUAL    */
+| expr_comparisons '>' expr_plus_minus         /* 4: GREATER          */   
+| expr_comparisons '<' expr_plus_minus         /* 4: LESS             */
+| expr_plus_minus
+;
+
+expr_plus_minus:                                    
+  expr_plus_minus '+' expr_times_div_mod       /* 3  PLUS */      
+| expr_plus_minus '-' expr_times_div_mod       /* 3: PLUS */
+| expr_times_div_mod
+;
+
+expr_times_div_mod:
+  expr_times_div_mod '*' expr_unary            /* 2: MULTIPLICATION */
+| expr_times_div_mod '/' expr_unary            /* 2: DIVISION */
+| expr_times_div_mod '%' expr_unary            /* 2: MODULE */
+| expr_unary
+;
+
+expr_unary:
+  '-' expr_unary                               /* 1: UNARY MINUS */
+| '!' expr_unary                               /* 1: NEGATE      */
+| expr_parentheses
+;
+
+expr_parentheses: '(' expression ')' | operands ; /* 0: PARENTHESES */
+
+operands: 
+  TK_IDENTIFICADOR 
+| TK_LIT_TRUE 
+| TK_LIT_FALSE 
+| TK_LIT_INT 
+| TK_LIT_FLOAT 
+| function_call
+;
 
     /* Primitives types */
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL ;
