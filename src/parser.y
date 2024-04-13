@@ -1,3 +1,8 @@
+/* Desenvolvido pelo Grupo K
+    - LEO HERNANDES DE VASCONCELOS - 323961
+    - VITOR CARUSO RODRIGUES FERRER - 327023
+*/
+
 %{
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -54,21 +59,26 @@ command:
 | while_command ','
 ;
 
+    /* Commands: attribution */
 attribution_command: TK_IDENTIFICADOR '=' expression ;
 
+    /* Commands: function call */
 function_call: TK_IDENTIFICADOR function_arguments  ;
 function_arguments: '(' arguments_list ')' | '(' ')' ;
 arguments_list: arguments_list ';' expression | expression ;
+
+    /* Commands: return */
 return_command: TK_PR_RETURN expression ;
 
+    /* Commands: conditional */
 conditional_command: if_command else_command  | if_command  ;  
 if_command: TK_PR_IF '(' expression ')' command_block ;
 else_command: TK_PR_ELSE command_block ;
 
+    /* Commands: while */
 while_command: TK_PR_WHILE '(' expression ')' command_block ;
 
     /* Expressions */
-
 expression: expr_or ;
 expr_or: expr_or TK_OC_OR expr_and | expr_and ;          /* 7: OR  */
 expr_and: expr_and TK_OC_AND expr_eq_ne | expr_eq_ne ;   /* 6: AND */
@@ -122,7 +132,8 @@ type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL ;
 
 #include <stdio.h>
 
+extern int yylineno;
 void yyerror (char const *mensagem)
 {
-    fprintf(stderr, "%s\n", mensagem);
+    fprintf(stderr, "At line %d: %s\n", yylineno, mensagem);
 }
