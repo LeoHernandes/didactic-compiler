@@ -7,7 +7,8 @@ ODIR=obj
 CDIR=src
 
 # Project's configurable macros ===============================
-PROJECT = etapa2 # <- WARNING! Change this at every deploy
+# WARNING! Change this at every deploy
+PROJECT = etapa2
 
 # You MUST list all header files here
 _DEPS = parser.tab.h

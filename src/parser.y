@@ -51,7 +51,8 @@ function_body: command_block ;
 command_block: '{' commands_list '}' | '{' '}' ;
 commands_list: commands_list command | command ;
 command: 
-  variable_declaration ','
+  command_block ','         /* Recursive block */
+| variable_declaration ','
 | attribution_command ','
 | function_call ','
 | return_command ','
