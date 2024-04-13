@@ -56,7 +56,9 @@ command:
 
 attribution_command: TK_IDENTIFICADOR '=' expression ;
 
-function_call: TK_IDENTIFICADOR function_parameters  ;
+function_call: TK_IDENTIFICADOR function_arguments  ;
+function_arguments: '(' arguments_list ')' | '(' ')' ;
+arguments_list: arguments_list ';' expression | expression ;
 return_command: TK_PR_RETURN expression ;
 
 conditional_command: if_command else_command  | if_command  ;  

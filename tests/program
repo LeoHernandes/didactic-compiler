@@ -33,13 +33,13 @@ wowwwwwww
 	}
 	else {
 		i5 = 6,
-	} 
+	}, 
 	
 	if (i5 == 4){
 	  	f2 = f2 * 2.5,
-	}
+	},
 	while (b3 == true){
 		b3 = false,
-	}
+	},
 	return true,
 }
