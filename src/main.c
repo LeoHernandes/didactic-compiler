@@ -1,15 +1,22 @@
-/*
-Função principal para realização da análise sintática.
-
-Este arquivo será posterioremente substituído, não acrescente nada.
-*/
 #include <stdio.h>
-#include "parser.tab.h" //arquivo gerado com bison -d parser.y
+#include "ast.h"
+
+extern int yyparse(void);
 extern int yylex_destroy(void);
 
-int main (int argc, char **argv)
+ast_t *ast_root = NULL;
+void exporta(void *ast_root);
+
+int main(int argc, char **argv)
 {
   int ret = yyparse();
   yylex_destroy();
+  exporta(ast_root);
+  ast_free(ast_root);
   return ret;
+}
+
+void exporta(void *ast_root)
+{
+  printf("FOOBAR");
 }
