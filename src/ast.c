@@ -1,5 +1,54 @@
 #include "ast.h"
 
+lexical_data_t *lexical_data_new(int line_number, lexical_value_token_t token, char *lexeme)
+{
+    lexical_data_t *data = NULL;
+    data = malloc(sizeof(lexical_data_t));
+
+    if (data != NULL)
+    {
+        data->line_number = line_number;
+        data->token = token;
+        data->lexeme = lexeme;
+    }
+
+    return data;
+}
+
+ast_t *ast_new_node(char *label)
+{
+    ast_t *node = NULL;
+    node = malloc(sizeof(ast_t));
+
+    if (node != NULL)
+    {
+        node->label = label;
+
+        node->value = NULL;
+        node->children = NULL;
+        node->number_of_children = 0;
+    }
+
+    return node;
+}
+
+ast_t *ast_new_lexeme_node(lexical_data_t *lex_data)
+{
+    ast_t *node = NULL;
+    node = malloc(sizeof(ast_t));
+
+    if (node != NULL)
+    {
+        node->value = lex_data;
+        node->label = lex_data->lexeme;
+
+        node->children = NULL;
+        node->number_of_children = 0;
+    }
+
+    return node;
+}
+
 void ast_free(ast_t *tree)
 {
     if (tree == NULL)

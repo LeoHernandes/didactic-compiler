@@ -9,6 +9,13 @@ void yyerror (char const *mensagem);
 %}
 
 %define parse.error verbose
+%code requires {#include "ast.h"}
+
+%union {
+  lexical_data_t *value;
+  ast_t *tree_node;
+}
+
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_BOOL
@@ -22,12 +29,14 @@ void yyerror (char const *mensagem);
 %token TK_OC_NE
 %token TK_OC_AND
 %token TK_OC_OR
-%token TK_IDENTIFICADOR
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
-%token TK_LIT_FALSE
-%token TK_LIT_TRUE
+%token<value> TK_IDENTIFICADOR
+%token<value> TK_LIT_INT
+%token<value> TK_LIT_FLOAT
+%token<value> TK_LIT_FALSE
+%token<value> TK_LIT_TRUE
 %token TK_ERRO
+
+%type<tree_node> operands
 
 %%
 
@@ -119,12 +128,12 @@ expr_unary:
 expr_parentheses: '(' expression ')' | operands ; /* 0: PARENTHESES */
 
 operands: 
-  TK_IDENTIFICADOR 
-| TK_LIT_TRUE 
-| TK_LIT_FALSE 
-| TK_LIT_INT 
-| TK_LIT_FLOAT 
-| function_call
+  TK_IDENTIFICADOR  {$$ = ast_new_lexeme_node($1);} 
+| TK_LIT_TRUE       {$$ = ast_new_lexeme_node($1);}
+| TK_LIT_FALSE      {$$ = ast_new_lexeme_node($1);}
+| TK_LIT_INT        {$$ = ast_new_lexeme_node($1);}
+| TK_LIT_FLOAT      {$$ = ast_new_lexeme_node($1);}
+| function_call     {$$ = NULL;}  /* TODO: resolver a árvore da function_call */
 ;
 
     /* Primitives types */

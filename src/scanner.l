@@ -5,6 +5,8 @@
 
 %{
     #include "parser.tab.h"
+    #include "string.h"
+    #include "ast.h"
 %}
 
 /* Stops processing after EOF */
@@ -45,14 +47,14 @@ single_line_comment \/\/.*
 
     /* ======== */
     /* Literals */
-{digit}+                        {return TK_LIT_INT;} 
-{digit}*\.{digit}+              {return TK_LIT_FLOAT;}
-"false"                         {return TK_LIT_FALSE;}
-"true"                          {return TK_LIT_TRUE;}
+{digit}+                        {yylval.value = lexical_data_new(yylineno, LITERAL, strdup(yytext)); return TK_LIT_INT;} 
+{digit}*\.{digit}+              {yylval.value = lexical_data_new(yylineno, LITERAL, strdup(yytext)); return TK_LIT_FLOAT;}
+"false"                         {yylval.value = lexical_data_new(yylineno, LITERAL, strdup(yytext)); return TK_LIT_FALSE;}
+"true"                          {yylval.value = lexical_data_new(yylineno, LITERAL, strdup(yytext)); return TK_LIT_TRUE;}
 
     /* =========== */
     /* Identifiers */
-{letter_}({letter_}|{digit})*   {return TK_IDENTIFICADOR;}
+{letter_}({letter_}|{digit})*   {yylval.value = lexical_data_new(yylineno,IDENTIFIER, strdup(yytext)); return TK_IDENTIFICADOR;}
 
     /* ================== */
     /* Special Characters */
