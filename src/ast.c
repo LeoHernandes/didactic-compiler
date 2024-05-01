@@ -75,8 +75,16 @@ void ast_add_child(ast_t *node, ast_t *child)
         node->children = realloc(node->children, node->number_of_children * sizeof(ast_t *));
         node->children[node->number_of_children - 1] = child;
     }
+    else if (node != NULL)
+    {
+        printf("Erro: %s recebeu parâmetro node = %s com child NULL.\n", __FUNCTION__, node->label);
+    }
+    else if (child != NULL)
+    {
+        printf("Erro: %s recebeu parâmetro node NULL com child = %s.\n", __FUNCTION__, child->label);
+    }
     else
     {
-        printf("Erro: %s recebeu parâmetro node = %p / %p.\n", __FUNCTION__, node, child);
+        printf("Erro: %s recebeu parâmetro node e child NULL.\n", __FUNCTION__);
     }
 }
