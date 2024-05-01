@@ -78,28 +78,39 @@ extern void *ast_root;
 program: elements_list                                                                  {ast_root = $1;}
 |
 ;
+
 elements_list: elements_list element                                                    {$$ = $1; ast_add_child($$, $2);}
 | element                                                                               {$$ = $1;}
 ;
+
 element: variable_declaration ','
 | function_declaration                                                                  {$$ = $1;}
 ;
 
     /* Variable declaration */
-variable_declaration: type variables_list ;
-variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
+variable_declaration: type variables_list
+;
+
+variables_list: variables_list ';' TK_IDENTIFICADOR
+| TK_IDENTIFICADOR
+;
 
     /* Function declaration */
-function_declaration: function_header function_body                                     {$$ = $2;}
+function_declaration: function_header function_body                                     {$$ = $1; ast_add_child($$, $2);}
 ;
-function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR ;
-function_parameters: '(' parameters_list ')' | '(' ')' ; 
-parameters_list: parameters_list ';' type TK_IDENTIFICADOR | type TK_IDENTIFICADOR ;  
+
+function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR                 {$$ = ast_new_lexeme_node($5);}
+;
+
+function_parameters: '(' parameters_list ')' | '(' ')'
+;
+
+parameters_list: parameters_list ';' type TK_IDENTIFICADOR | type TK_IDENTIFICADOR
+;
 
 function_body: command_block                                                            {$$ = $1;}
 ;
-
-    /* Commands */
+/* Commands */
 command_block: '{' commands_list '}'                            {$$ = $2;}
 | '{' '}'
 ;
