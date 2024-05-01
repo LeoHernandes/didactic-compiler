@@ -66,3 +66,17 @@ void ast_free(ast_t *tree)
     free(tree->value);
     free(tree);
 }
+
+void ast_add_child(ast_t *node, ast_t *child)
+{
+    if (node != NULL && child != NULL)
+    {
+        node->number_of_children++;
+        node->children = realloc(node->children, node->number_of_children * sizeof(ast_t *));
+        node->children[node->number_of_children - 1] = child;
+    }
+    else
+    {
+        printf("Erro: %s recebeu parâmetro node = %p / %p.\n", __FUNCTION__, node, child);
+    }
+}

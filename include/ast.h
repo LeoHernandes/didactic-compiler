@@ -47,4 +47,9 @@ ast_t *ast_new_lexeme_node(lexical_data_t *data);
  */
 void ast_free(ast_t *tree);
 
+/*
+ * Add :child as a child of :node
+ */
+void ast_add_child(ast_t *node, ast_t *child);
+
 #endif
