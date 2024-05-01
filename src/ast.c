@@ -15,14 +15,14 @@ lexical_data_t *lexical_data_new(int line_number, lexical_value_token_t token, c
     return data;
 }
 
-ast_t *ast_new_node(char *label)
+ast_t *ast_new_node(const char *label)
 {
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
 
     if (node != NULL)
     {
-        node->label = label;
+        node->label = strdup(label);
 
         node->value = NULL;
         node->children = NULL;
@@ -62,7 +62,7 @@ void ast_free(ast_t *tree)
         ast_free(tree->children[i]);
     }
     free(tree->children);
-    // free(tree->label); // TODO: find why this is causing invalid pointer
+    free(tree->label);
     free(tree->value);
     free(tree);
 }

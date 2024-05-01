@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <string.h>
 
 enum lexical_value_token
 {
@@ -35,7 +36,7 @@ typedef struct ast
 /*
  * Creates a `ast_tree` node
  */
-ast_t *ast_new_node(char *label);
+ast_t *ast_new_node(const char *label);
 
 /*
  * Creates a `ast_tree` node with lexical data
