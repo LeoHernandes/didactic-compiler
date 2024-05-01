@@ -79,7 +79,7 @@ program: elements_list                                                          
 |
 ;
 
-elements_list: elements_list element                                                    {$$ = $1; ast_add_child($$, $2);}
+elements_list: elements_list element                                                    {$$ = $1; ast_add_as_n_child_of_node($$, $2, 2);}
 | element                                                                               {$$ = $1;}
 ;
 
@@ -96,7 +96,7 @@ variables_list: variables_list ';' TK_IDENTIFICADOR
 ;
 
     /* Function declaration */
-function_declaration: function_header function_body                                     {$$ = $1; ast_add_child($$, $2);}
+function_declaration: function_header function_body                                     {$$ = $1; if ($2 != NULL) ast_add_child($$, $2);}
 ;
 
 function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR                 {$$ = ast_new_lexeme_node($5);}
@@ -112,16 +112,16 @@ function_body: command_block                                                    
 ;
 /* Commands */
 command_block: '{' commands_list '}'                            {$$ = $2;}
-| '{' '}'
+| '{' '}'                                                       {$$ = NULL;}
 ;
 
-commands_list: commands_list command                            {$$ = $1; ast_add_child($$, $2);}
+commands_list: commands_list command                            {$$ = $1; if ($2 != NULL) ast_add_as_n_child_of_node($$, $2, 2);}
 | command                                                       {$$ = $1;}
 ;
 
 command: 
   command_block ','         /* Recursive block */               {$$ = $1;}
-| variable_declaration ','                                      {$$ = NULL;}
+| variable_declaration ','                                      {$$ = $1;}
 | attribution_command ','                                       {$$ = $1;}
 | function_call ','                                             {$$ = NULL;}
 | return_command ','                                            {$$ = $1;}

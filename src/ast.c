@@ -88,3 +88,16 @@ void ast_add_child(ast_t *node, ast_t *child)
         printf("Erro: %s recebeu parâmetro node e child NULL.\n", __FUNCTION__);
     }
 }
+
+void ast_add_as_n_child_of_node(ast_t *node, ast_t *child, int n)
+{
+    if (node != NULL && child != NULL)
+    {
+        if (node->number_of_children == n - 1)
+        {
+            ast_add_child(node, child);
+            return;
+        }
+        ast_add_as_n_child_of_node(node->children[node->number_of_children - 1], child, n);
+    }
+}
