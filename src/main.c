@@ -5,7 +5,7 @@ extern int yyparse(void);
 extern int yylex_destroy(void);
 
 ast_t *ast_root = NULL;
-void exporta(void *ast_root);
+void exporta(ast_t *ast_root);
 
 int main(int argc, char **argv)
 {
@@ -16,7 +16,16 @@ int main(int argc, char **argv)
   return ret;
 }
 
-void exporta(void *ast_root)
+void exporta(ast_t *ast_root)
 {
-  printf("FOOBAR");
+  int i;
+  if (ast_root != NULL)
+  {
+    for (i = 0; i < ast_root->number_of_children; i++)
+    {
+      printf("%p, %p\n", ast_root, ast_root->children[i]);
+      exporta(ast_root->children[i]);
+    }
+    printf("%p [label=\"%s\"]\n", ast_root, ast_root->label);
+  }
 }

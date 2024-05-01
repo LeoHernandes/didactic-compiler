@@ -62,7 +62,7 @@ void ast_free(ast_t *tree)
         ast_free(tree->children[i]);
     }
     free(tree->children);
-    free(tree->label);
+    // free(tree->label); // TODO: find why this is causing invalid pointer
     free(tree->value);
     free(tree);
 }
