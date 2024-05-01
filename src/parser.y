@@ -75,32 +75,47 @@ extern void *ast_root;
 %%
 
     /* Program generic structure */
-program: elements_list | ;
-elements_list : elements_list element | element ;
-element : variable_declaration ',' | function_declaration ;
+program: elements_list                                                                  {ast_root = $1;}
+|
+;
+elements_list: elements_list element                                                    {$$ = $1; ast_add_child($$, $2);}
+| element                                                                               {$$ = $1;}
+;
+element: variable_declaration ','
+| function_declaration                                                                  {$$ = $1;}
+;
 
     /* Variable declaration */
 variable_declaration: type variables_list ;
 variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
 
     /* Function declaration */
-function_declaration: function_header function_body ;
+function_declaration: function_header function_body                                     {$$ = $2;}
+;
 function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR ;
 function_parameters: '(' parameters_list ')' | '(' ')' ; 
 parameters_list: parameters_list ';' type TK_IDENTIFICADOR | type TK_IDENTIFICADOR ;  
-function_body: command_block ;
+
+function_body: command_block                                                            {$$ = $1;}
+;
 
     /* Commands */
-command_block: '{' commands_list '}' | '{' '}' ;
-commands_list: commands_list command | command ;
+command_block: '{' commands_list '}'                            {$$ = $2;}
+| '{' '}'
+;
+
+commands_list: commands_list command                            {$$ = $1; ast_add_child($$, $2);}
+| command                                                       {$$ = $1;}
+;
+
 command: 
-  command_block ','         /* Recursive block */
-| variable_declaration ','
-| attribution_command ','
-| function_call ','
-| return_command ','
-| conditional_command ','
-| while_command ','
+  command_block ','         /* Recursive block */               {$$ = $1;}
+| variable_declaration ','                                      {$$ = NULL;}
+| attribution_command ','                                       {$$ = NULL;}
+| function_call ','                                             {$$ = NULL;}
+| return_command ','                                            {$$ = $1;}
+| conditional_command ','                                       {$$ = $1;}
+| while_command ','                                             {$$ = $1;}
 ;
 
     /* Commands: attribution */
@@ -112,18 +127,26 @@ function_arguments: '(' arguments_list ')' | '(' ')' ;
 arguments_list: arguments_list ';' expression | expression ;
 
     /* Commands: return */
-return_command: TK_PR_RETURN expression ;
+return_command: TK_PR_RETURN expression                         {$$ = ast_new_node("return"); ast_add_child($$, $2);}
+;
 
     /* Commands: conditional */
-conditional_command: if_command else_command  | if_command  ;  
-if_command: TK_PR_IF '(' expression ')' command_block ;
-else_command: TK_PR_ELSE command_block ;
+conditional_command: if_command else_command                    {$$ = $1; ast_add_child($$, $2);}
+| if_command                                                    {$$ = $1;}
+;
+
+if_command: TK_PR_IF '(' expression ')' command_block           {$$ = ast_new_node("if"); ast_add_child($$, $3); ast_add_child($$, $5);}
+;
+
+else_command: TK_PR_ELSE command_block                          {$$ = $2;}
+;
 
     /* Commands: while */
-while_command: TK_PR_WHILE '(' expression ')' command_block ;
+while_command: TK_PR_WHILE '(' expression ')' command_block     {$$ = ast_new_node("while"); ast_add_child($$, $3); ast_add_child($$, $5);}
+;
 
     /* Expressions */
-expression: expr_or                           {$$ = $1; ast_root = $$;}
+expression: expr_or                           {$$ = $1;}
 ;
 
 expr_or: expr_or TK_OC_OR expr_and            {$$ = ast_new_node("|"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
