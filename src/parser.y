@@ -88,7 +88,7 @@ element: variable_declaration ','
 ;
 
     /* Variable declaration */
-variable_declaration: type variables_list
+variable_declaration: type variables_list                                               {$$ = NULL;}
 ;
 
 variables_list: variables_list ';' TK_IDENTIFICADOR
@@ -122,7 +122,7 @@ commands_list: commands_list command                            {$$ = $1; ast_ad
 command: 
   command_block ','         /* Recursive block */               {$$ = $1;}
 | variable_declaration ','                                      {$$ = NULL;}
-| attribution_command ','                                       {$$ = NULL;}
+| attribution_command ','                                       {$$ = $1;}
 | function_call ','                                             {$$ = NULL;}
 | return_command ','                                            {$$ = $1;}
 | conditional_command ','                                       {$$ = $1;}
@@ -130,12 +130,18 @@ command:
 ;
 
     /* Commands: attribution */
-attribution_command: TK_IDENTIFICADOR '=' expression ;
+attribution_command: TK_IDENTIFICADOR '=' expression            {$$ = ast_new_lexeme_node($1); ast_add_child($$, $3);}
+;
 
     /* Commands: function call */
-function_call: TK_IDENTIFICADOR function_arguments  ;
-function_arguments: '(' arguments_list ')' | '(' ')' ;
-arguments_list: arguments_list ';' expression | expression ;
+function_call: TK_IDENTIFICADOR function_arguments
+;
+function_arguments: '(' arguments_list ')'
+| '(' ')'
+;
+arguments_list: arguments_list ';' expression
+| expression
+;
 
     /* Commands: return */
 return_command: TK_PR_RETURN expression                         {$$ = ast_new_node("return"); ast_add_child($$, $2);}
