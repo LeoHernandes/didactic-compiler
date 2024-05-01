@@ -75,28 +75,28 @@ extern void *ast_root;
 %%
 
     /* Program generic structure */
-program: elements_list | ;
-elements_list : elements_list element | element ;
-element : variable_declaration ',' | function_declaration ;
+program: elements_list {ast_root = $1;}| ;
+elements_list : elements_list element {$$ = $1;}| element {$$ = $1;};
+element : variable_declaration ',' | function_declaration {$$ = $1;};
 
     /* Variable declaration */
 variable_declaration: type variables_list ;
 variables_list: variables_list ';' TK_IDENTIFICADOR | TK_IDENTIFICADOR ;
 
     /* Function declaration */
-function_declaration: function_header function_body ;
+function_declaration: function_header function_body {$$ = $2;};
 function_header: function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR ;
 function_parameters: '(' parameters_list ')' | '(' ')' ; 
 parameters_list: parameters_list ';' type TK_IDENTIFICADOR | type TK_IDENTIFICADOR ;  
-function_body: command_block ;
+function_body: command_block {$$ = $1;};
 
     /* Commands */
-command_block: '{' commands_list '}' | '{' '}' ;
-commands_list: commands_list command | command ;
+command_block: '{' commands_list '}' {$$ = $2;}| '{' '}' ;
+commands_list: commands_list command | command {$$ = $1;};
 command: 
   command_block ','         /* Recursive block */
 | variable_declaration ','
-| attribution_command ','
+| attribution_command ',' {$$ = $1;}
 | function_call ','
 | return_command ','
 | conditional_command ','
@@ -104,7 +104,7 @@ command:
 ;
 
     /* Commands: attribution */
-attribution_command: TK_IDENTIFICADOR '=' expression ;
+attribution_command: TK_IDENTIFICADOR '=' expression {$$ = $3;};
 
     /* Commands: function call */
 function_call: TK_IDENTIFICADOR function_arguments  ;
