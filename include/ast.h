@@ -53,9 +53,4 @@ void ast_free(ast_t *tree);
  */
 void ast_add_child(ast_t *node, ast_t *child);
 
-/*
- * Add :child when it is the n-esim child of the node
- */
-void ast_add_as_n_child_of_node(ast_t *node, ast_t *child, int num_childs);
-
 #endif

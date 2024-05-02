@@ -51,53 +51,30 @@ ast_t *ast_new_lexeme_node(lexical_data_t *lex_data)
 
 void ast_free(ast_t *tree)
 {
-    if (tree == NULL)
+    if (tree != NULL)
     {
-        printf("Warning: tried to free a NULL tree\n");
-        return;
+        for (int i = 0; i < tree->number_of_children; i++)
+        {
+            ast_free(tree->children[i]);
+        }
+        free(tree->children);
+        free(tree->label);
+        free(tree->value);
+        free(tree);
     }
-
-    for (int i = 0; i < tree->number_of_children; i++)
-    {
-        ast_free(tree->children[i]);
-    }
-    free(tree->children);
-    free(tree->label);
-    free(tree->value);
-    free(tree);
 }
 
 void ast_add_child(ast_t *node, ast_t *child)
 {
-    if (node != NULL && child != NULL)
+    if (node == NULL)
+    {
+        printf("ERROR: tried to add a child node to a NULL parent node\n");
+    }
+
+    if (child != NULL)
     {
         node->number_of_children++;
         node->children = realloc(node->children, node->number_of_children * sizeof(ast_t *));
         node->children[node->number_of_children - 1] = child;
-    }
-    else if (node != NULL)
-    {
-        printf("Erro: %s recebeu parâmetro node = %s com child NULL.\n", __FUNCTION__, node->label);
-    }
-    else if (child != NULL)
-    {
-        printf("Erro: %s recebeu parâmetro node NULL com child = %s.\n", __FUNCTION__, child->label);
-    }
-    else
-    {
-        printf("Erro: %s recebeu parâmetro node e child NULL.\n", __FUNCTION__);
-    }
-}
-
-void ast_add_as_n_child_of_node(ast_t *node, ast_t *child, int n)
-{
-    if (node != NULL && child != NULL)
-    {
-        if (node->number_of_children == n - 1)
-        {
-            ast_add_child(node, child);
-            return;
-        }
-        ast_add_as_n_child_of_node(node->children[node->number_of_children - 1], child, n);
     }
 }
