@@ -1,12 +1,9 @@
-() | int / f1
-{
-    if (true) {
-        return 3,
-        return 2 + 2,
-    } 
-    else {
-        return (7 * 4) + 2,
-    },
+(int i; int j; int k) | int / f1{
+    int a,
+    a = 1,
+    a = 2,
+    a = 3,
+    a = 4,
 }
 
 () | bool / f2

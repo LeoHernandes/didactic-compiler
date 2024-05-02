@@ -1,0 +1,19 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x55f190c08370 -> x55f190c08710
+  x55f190c08710 -> x55f190c08760
+  x55f190c08760 [label="a"]
+  x55f190c08710 -> x55f190c086a0
+  x55f190c086a0 -> x55f190c085c0
+  x55f190c085c0 -> x55f190c08520
+  x55f190c08520 [label="b"]
+  x55f190c085c0 -> x55f190c08590
+  x55f190c08590 [label="c"]
+  x55f190c085c0 [label="*"]
+  x55f190c086a0 -> x55f190c08670
+  x55f190c08670 [label="d"]
+  x55f190c086a0 [label="*"]
+  x55f190c08710 [label="="]
+  x55f190c08370 [label="f"]
+}

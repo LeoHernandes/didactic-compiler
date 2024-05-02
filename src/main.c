@@ -12,9 +12,11 @@ int main(int argc, char **argv)
   int ret = yyparse();
   yylex_destroy();
 
-  exporta(ast_root);
   if (ast_root != NULL) // if it isn't a empty program
+  {
+    exporta(ast_root);
     ast_free(ast_root);
+  }
 
   return ret;
 }

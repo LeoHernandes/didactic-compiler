@@ -1,0 +1,85 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x55856ecce430 -> x55856ecce550
+  x55856ecce550 -> x55856ecce5a0
+  x55856ecce5a0 [label="a"]
+  x55856ecce550 -> x55856ecce520
+  x55856ecce520 [label="1"]
+  x55856ecce550 -> x55856ecce6a0
+  x55856ecce6a0 -> x55856ecce6f0
+  x55856ecce6f0 [label="a"]
+  x55856ecce6a0 -> x55856ecce670
+  x55856ecce670 [label="2"]
+  x55856ecce6a0 -> x55856ecce7f0
+  x55856ecce7f0 -> x55856ecce840
+  x55856ecce840 [label="a"]
+  x55856ecce7f0 -> x55856ecce7c0
+  x55856ecce7c0 [label="3"]
+  x55856ecce7f0 -> x55856ecce940
+  x55856ecce940 -> x55856ecce990
+  x55856ecce990 [label="a"]
+  x55856ecce940 -> x55856ecce910
+  x55856ecce910 [label="4"]
+  x55856ecce940 [label="="]
+  x55856ecce7f0 [label="="]
+  x55856ecce6a0 [label="="]
+  x55856ecce550 [label="="]
+  x55856ecce430 -> x55856eccea40
+  x55856eccea40 -> x55856ecceed0
+  x55856ecceed0 -> x55856ecceab0
+  x55856ecceab0 [label="true"]
+  x55856ecceed0 -> x55856eccec70
+  x55856eccec70 -> x55856eccecc0
+  x55856eccecc0 [label="var1"]
+  x55856eccec70 -> x55856eccec00
+  x55856eccec00 -> x55856ecceb60
+  x55856ecceb60 [label="2"]
+  x55856eccec00 -> x55856eccebd0
+  x55856eccebd0 [label="2"]
+  x55856eccec00 [label="+"]
+  x55856eccec70 -> x55856ecced80
+  x55856ecced80 -> x55856ecced50
+  x55856ecced50 [label="var1"]
+  x55856ecced80 -> x55856eccee60
+  x55856eccee60 -> x55856eccee30
+  x55856eccee30 [label="var2"]
+  x55856eccee60 [label="return"]
+  x55856ecced80 [label="return"]
+  x55856eccec70 [label="="]
+  x55856ecceed0 -> x55856eccf170
+  x55856eccf170 -> x55856eccf100
+  x55856eccf100 -> x55856eccf020
+  x55856eccf020 -> x55856eccef80
+  x55856eccef80 [label="7"]
+  x55856eccf020 -> x55856ecceff0
+  x55856ecceff0 [label="4"]
+  x55856eccf020 [label="*"]
+  x55856eccf100 -> x55856eccf0d0
+  x55856eccf0d0 [label="2"]
+  x55856eccf100 [label="+"]
+  x55856eccf170 [label="return"]
+  x55856ecceed0 [label="if"]
+  x55856eccea40 -> x55856eccf240
+  x55856eccf240 -> x55856eccf2e0
+  x55856eccf2e0 -> x55856eccf2b0
+  x55856eccf2b0 [label="2"]
+  x55856eccf2e0 -> x55856eccf3c0
+  x55856eccf3c0 -> x55856eccf390
+  x55856eccf390 [label="2"]
+  x55856eccf3c0 -> x55856eccf4a0
+  x55856eccf4a0 -> x55856eccf470
+  x55856eccf470 [label="2"]
+  x55856eccf4a0 -> x55856eccf580
+  x55856eccf580 -> x55856eccf550
+  x55856eccf550 [label="2"]
+  x55856eccf580 [label="return"]
+  x55856eccf4a0 [label="return"]
+  x55856eccf3c0 [label="return"]
+  x55856eccf2e0 [label="return"]
+  x55856eccf240 -> x55856eccf650
+  x55856eccf650 [label="f4"]
+  x55856eccf240 [label="f3"]
+  x55856eccea40 [label="f2"]
+  x55856ecce430 [label="f1"]
+}

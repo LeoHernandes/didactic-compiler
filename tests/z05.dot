@@ -1,0 +1,11 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x55c9c7378370 -> x55c9c7378490
+  x55c9c7378490 -> x55c9c73784e0
+  x55c9c73784e0 [label="a"]
+  x55c9c7378490 -> x55c9c7378460
+  x55c9c7378460 [label="3"]
+  x55c9c7378490 [label="="]
+  x55c9c7378370 [label="f"]
+}

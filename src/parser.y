@@ -78,8 +78,20 @@ program:
 |                                       {ast_root = NULL;}
 ;
 
-elements_list:
-  element elements_list                 {$$ = $1; ast_add_child($$, $2);}
+elements_list: element elements_list
+{
+    if ($1 != NULL)
+    {
+      $$ = $1;
+      ast_add_child($$, $2);
+    }
+    else
+    {
+      // if this element is a NULL node, consider the next
+      // eg. variable declaration element
+      $$ = $2; 
+    }
+}
 | element                               {$$ = $1;}
 ;
 
@@ -126,8 +138,20 @@ command_block:
 | '{' '}'                                 {$$ = NULL;}
 ;
 
-commands_list:
-  command commands_list                   {$$ = $1; ast_add_child($$, $2);}
+commands_list: command commands_list
+{
+    if ($1 != NULL)
+    {
+      $$ = $1;
+      ast_add_child($$, $2);
+    }
+    else
+    {
+      // if this command is a NULL node, consider the next
+      // eg. variable declaration command
+      $$ = $2; 
+    }
+}
 | command                                 {$$ = $1;}
 ;
 
@@ -143,7 +167,7 @@ command:
 
 /* ======================= Commands: attribution */
 attribution_command: 
-  TK_IDENTIFICADOR '=' expression         {$$ = ast_new_lexeme_node($1); ast_add_child($$, $3);}
+  TK_IDENTIFICADOR '=' expression         {$$ = ast_new_node("="); ast_add_child($$, ast_new_lexeme_node($1)); ast_add_child($$, $3);}
 ;
 
 /* ======================= Commands: function call */

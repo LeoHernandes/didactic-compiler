@@ -37,14 +37,17 @@ ast_t *ast_new_lexeme_node(lexical_data_t *lex_data)
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
 
-    if (node != NULL)
+    if (node == NULL)
     {
-        node->value = lex_data;
-        node->label = lex_data->lexeme;
-
-        node->children = NULL;
-        node->number_of_children = 0;
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
     }
+
+    node->value = lex_data;
+    node->label = lex_data->lexeme;
+
+    node->children = NULL;
+    node->number_of_children = 0;
 
     return node;
 }
@@ -54,17 +57,20 @@ ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *la
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
 
+    if (node == NULL)
+    {
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
+    }
+
     char *prefixed_label = strdup(label);
     strcat(prefixed_label, lex_data->lexeme);
 
-    if (node != NULL)
-    {
-        node->value = lex_data;
-        node->label = prefixed_label;
+    node->value = lex_data;
+    node->label = prefixed_label;
 
-        node->children = NULL;
-        node->number_of_children = 0;
-    }
+    node->children = NULL;
+    node->number_of_children = 0;
 
     return node;
 }
@@ -89,6 +95,7 @@ void ast_add_child(ast_t *node, ast_t *child)
     if (node == NULL)
     {
         printf("ERROR: tried to add a child node to a NULL parent node\n");
+        return;
     }
 
     if (child != NULL)

@@ -1,0 +1,33 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x55a73a902430 -> x55a73a9024a0
+  x55a73a9024a0 -> x55a73a902640
+  x55a73a902640 -> x55a73a902690
+  x55a73a902690 [label="a"]
+  x55a73a902640 -> x55a73a902610
+  x55a73a902610 [label="1"]
+  x55a73a902640 -> x55a73a902790
+  x55a73a902790 -> x55a73a9027e0
+  x55a73a9027e0 [label="b"]
+  x55a73a902790 -> x55a73a902760
+  x55a73a902760 [label="2"]
+  x55a73a902790 -> x55a73a9028e0
+  x55a73a9028e0 -> x55a73a902930
+  x55a73a902930 [label="c"]
+  x55a73a9028e0 -> x55a73a9028b0
+  x55a73a9028b0 [label="3"]
+  x55a73a9028e0 -> x55a73a902b50
+  x55a73a902b50 -> x55a73a902a00
+  x55a73a902a00 -> x55a73a902a70
+  x55a73a902a70 -> x55a73a902ae0
+  x55a73a902ae0 [label="c"]
+  x55a73a902a70 [label="b"]
+  x55a73a902a00 [label="a"]
+  x55a73a902b50 [label="call g"]
+  x55a73a9028e0 [label="="]
+  x55a73a902790 [label="="]
+  x55a73a902640 [label="="]
+  x55a73a9024a0 [label="f"]
+  x55a73a902430 [label="g"]
+}

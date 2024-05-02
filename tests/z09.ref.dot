@@ -1,0 +1,7 @@
+digraph {
+label="Ref";
+fg -> ff
+fg [label="g"];
+ff [label="f"];
+
+}
