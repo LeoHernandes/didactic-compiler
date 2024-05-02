@@ -1,7 +1,8 @@
 #!/bin/bash
 
+make
 for file in $(ls tests --hide="*.dot"); do
-    ./etapa3 < tests/$file | ./output2dot.sh > tests/$file.dot;
+    ./etapa3 < tests/$file | ./scripts/output2dot.sh > tests/$file.dot;
 done
 
 for i in {00..59}; do
