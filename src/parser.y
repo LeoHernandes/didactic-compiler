@@ -44,12 +44,8 @@ extern ast_t *ast_root;
 %type<tree_node> program
 %type<tree_node> elements_list
 %type<tree_node> element
-%type<tree_node> variable_declaration
-%type<tree_node> variables_list
 %type<tree_node> function_declaration
 %type<tree_node> function_header
-%type<tree_node> function_parameters
-%type<tree_node> parameters_list
 %type<tree_node> function_body
 %type<tree_node> command_block
 %type<tree_node> commands_list
@@ -88,13 +84,13 @@ elements_list:
 ;
 
 element:
-  variable_declaration ','              {$$ = $1;}
+  variable_declaration ','              {$$ = NULL;}
 | function_declaration                  {$$ = $1;}
 ;
 
 /* ======================= Variable declaration ======================= */
 variable_declaration:
-  type variables_list                   {$$ = NULL;}
+  type variables_list                   
 ;
 
 variables_list:
@@ -104,7 +100,7 @@ variables_list:
 
 /* ======================= Function declaration ======================= */
 function_declaration:
-  function_header function_body                                   {$$ = $1; if ($2 != NULL) ast_add_child($$, $2);}
+  function_header function_body                                   {$$ = $1; ast_add_child($$, $2);}
 ;
 
 function_header:
@@ -137,9 +133,9 @@ commands_list:
 
 command: 
   command_block ','                       {$$ = $1;}    /* Recursive block */
-| variable_declaration ','                {$$ = $1;}
+| variable_declaration ','                {$$ = NULL;}
 | attribution_command ','                 {$$ = $1;}
-| function_call ','                       {$$ = NULL;}
+| function_call ','                       {$$ = $1;}
 | return_command ','                      {$$ = $1;}
 | conditional_command ','                 {$$ = $1;}
 | while_command ','                       {$$ = $1;}
@@ -152,15 +148,17 @@ attribution_command:
 
 /* ======================= Commands: function call */
 function_call:
-  TK_IDENTIFICADOR function_arguments
+  TK_IDENTIFICADOR function_arguments     {$$ = ast_new_lexeme_node_prefix_label($1, "call "); ast_add_child($$, $2);}
 ;
+
 function_arguments:
-  '(' arguments_list ')'
-| '(' ')'
+  '(' arguments_list ')'                  {$$ = $2;}
+| '(' ')'                                 {$$ = NULL;}
 ;
+
 arguments_list: 
-  arguments_list ';' expression
-| expression
+  expression ';' arguments_list           {$$ = $1; ast_add_child($$, $3);}
+| expression                              {$$ = $1;}
 ;
 
 /* ======================= Commands: return */
@@ -235,7 +233,7 @@ expr_unary: '-' expr_unary                    {$$ = ast_new_node("-"); ast_add_c
 ;
 
 expr_parentheses: 
-  '(' expression ')'                          {$$ = $2;}                                         /* 0: PARENTHESES */
+  '(' expression ')'                          {$$ = $2;}  /* 0: PARENTHESES */
 | operands                                    {$$ = $1;}
 ;
 
@@ -245,7 +243,7 @@ operands:
 | TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1);}
 | TK_LIT_INT                                  {$$ = ast_new_lexeme_node($1);}
 | TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1);}
-| function_call                               {$$ = NULL;}  /* TODO: resolver a árvore da function_call */
+| function_call                               {$$ = $1;}
 ;
 
 /* ======================= Primitives types ======================= */

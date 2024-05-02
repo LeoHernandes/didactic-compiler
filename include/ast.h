@@ -41,7 +41,12 @@ ast_t *ast_new_node(const char *label);
 /*
  * Creates a `ast_tree` node with lexical data
  */
-ast_t *ast_new_lexeme_node(lexical_data_t *data);
+ast_t *ast_new_lexeme_node(lexical_data_t *lex_data);
+
+/*
+ * Creates a `ast_tree` node with lexical data
+ */
+ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label);
 
 /*
  * Frees allocated memory of the current node and its children

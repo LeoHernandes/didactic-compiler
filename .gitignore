@@ -4,3 +4,4 @@ lex.yy.c
 parser.tab.*
 .vscode/
 etapa*
+*.dot
