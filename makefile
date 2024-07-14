@@ -8,10 +8,10 @@ CDIR=src
 
 # Project's configurable macros ===============================
 # WARNING! Change this at every deploy
-PROJECT = etapa3
+PROJECT = etapa4
 
 # You MUST list all header files here
-_DEPS = parser.tab.h ast.h
+_DEPS = parser.tab.h ast.h dataType.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # You MUST list all object files here

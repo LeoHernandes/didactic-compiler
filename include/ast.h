@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include "dataType.h"
 
 enum lexical_value_token
 {
@@ -31,22 +32,23 @@ typedef struct ast
     lexical_data_t *value;
     int number_of_children;
     struct ast **children;
+    data_type_t type;
 } ast_t;
 
 /*
  * Creates a `ast_tree` node
  */
-ast_t *ast_new_node(const char *label);
+ast_t *ast_new_node(const char *label, data_type_t type);
 
 /*
  * Creates a `ast_tree` node with lexical data
  */
-ast_t *ast_new_lexeme_node(lexical_data_t *lex_data);
+ast_t *ast_new_lexeme_node(lexical_data_t *lex_data, data_type_t type);
 
 /*
- * Creates a `ast_tree` node with lexical data
+ * Creates a `ast_tree` node with lexical data, whose label is prefixed with a given string
  */
-ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label);
+ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label, data_type_t type);
 
 /*
  * Frees allocated memory of the current node and its children

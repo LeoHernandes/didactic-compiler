@@ -18,6 +18,7 @@ extern ast_t *ast_root;
 %union {
   lexical_data_t *value;
   ast_t *tree_node;
+  data_type_t data_type;
 }
 
 %token TK_PR_INT
@@ -69,6 +70,7 @@ extern ast_t *ast_root;
 %type<tree_node> expr_unary
 %type<tree_node> expr_parentheses
 %type<tree_node> operands
+%type<data_type> type
 
 %%
 
@@ -116,7 +118,7 @@ function_declaration:
 ;
 
 function_header:
-  function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR          {$$ = ast_new_lexeme_node($5);}
+  function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR          {$$ = ast_new_lexeme_node($5, $3);}
 ;
 
 function_parameters:
@@ -167,12 +169,12 @@ command:
 
 /* ======================= Commands: attribution */
 attribution_command: 
-  TK_IDENTIFICADOR '=' expression         {$$ = ast_new_node("="); ast_add_child($$, ast_new_lexeme_node($1)); ast_add_child($$, $3);}
+  TK_IDENTIFICADOR '=' expression         {$$ = ast_new_node("=", UNKNOWN); ast_add_child($$, ast_new_lexeme_node($1, UNKNOWN)); ast_add_child($$, $3);}
 ;
 
 /* ======================= Commands: function call */
 function_call:
-  TK_IDENTIFICADOR function_arguments     {$$ = ast_new_lexeme_node_prefix_label($1, "call "); ast_add_child($$, $2);}
+  TK_IDENTIFICADOR function_arguments     {$$ = ast_new_lexeme_node_prefix_label($1, "call ", UNKNOWN); ast_add_child($$, $2);}
 ;
 
 function_arguments:
@@ -187,7 +189,7 @@ arguments_list:
 
 /* ======================= Commands: return */
 return_command: 
-  TK_PR_RETURN expression                           {$$ = ast_new_node("return"); ast_add_child($$, $2);}
+  TK_PR_RETURN expression                           {$$ = ast_new_node("return", $2->type); ast_add_child($$, $2);}
 ;
 
 /* ======================= Commands: conditional */
@@ -197,7 +199,7 @@ conditional_command:
 ;
 
 if_command: 
-  TK_PR_IF '(' expression ')' command_block         {$$ = ast_new_node("if"); ast_add_child($$, $3); ast_add_child($$, $5);}
+  TK_PR_IF '(' expression ')' command_block         {$$ = ast_new_node("if", BOOL); ast_add_child($$, $3); ast_add_child($$, $5);}
 ;
 
 else_command:
@@ -206,7 +208,7 @@ else_command:
 
 /* ======================= Commands: while */
 while_command:
-  TK_PR_WHILE '(' expression ')' command_block      {$$ = ast_new_node("while"); ast_add_child($$, $3); ast_add_child($$, $5);}
+  TK_PR_WHILE '(' expression ')' command_block      {$$ = ast_new_node("while", BOOL); ast_add_child($$, $3); ast_add_child($$, $5);}
 ;
 
 /* ======================= Expressions ======================= */
@@ -215,44 +217,44 @@ expression:
 ;
 
 expr_or:
-  expr_or TK_OC_OR expr_and                   {$$ = ast_new_node("|"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
+  expr_or TK_OC_OR expr_and                   {$$ = ast_new_node("|", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
 | expr_and                                    {$$ = $1;}
 ;
 
 expr_and:
-  expr_and TK_OC_AND expr_eq_ne               {$$ = ast_new_node("&"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 6: AND */
+  expr_and TK_OC_AND expr_eq_ne               {$$ = ast_new_node("&", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 6: AND */
 | expr_eq_ne                                  {$$ = $1;}
 ;
 
 expr_eq_ne:
-  expr_eq_ne TK_OC_EQ expr_comparisons        {$$ = ast_new_node("=="); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: EQUAL     */
-| expr_eq_ne TK_OC_NE expr_comparisons        {$$ = ast_new_node("!="); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: NOT EQUAL */
+  expr_eq_ne TK_OC_EQ expr_comparisons        {$$ = ast_new_node("==", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: EQUAL     */
+| expr_eq_ne TK_OC_NE expr_comparisons        {$$ = ast_new_node("!=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: NOT EQUAL */
 | expr_comparisons                            {$$ = $1;}
 ;
 
 expr_comparisons:
-  expr_comparisons TK_OC_GE expr_plus_minus   {$$ = ast_new_node(">="); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: GREATER OR EQUAL */
-| expr_comparisons TK_OC_LE expr_plus_minus   {$$ = ast_new_node("<="); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: LESS OR EQUAL    */
-| expr_comparisons '>' expr_plus_minus        {$$ = ast_new_node(">"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: GREATER          */
-| expr_comparisons '<' expr_plus_minus        {$$ = ast_new_node("<"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: LESS             */
+  expr_comparisons TK_OC_GE expr_plus_minus   {$$ = ast_new_node(">=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: GREATER OR EQUAL */
+| expr_comparisons TK_OC_LE expr_plus_minus   {$$ = ast_new_node("<=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: LESS OR EQUAL    */
+| expr_comparisons '>' expr_plus_minus        {$$ = ast_new_node(">", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: GREATER          */
+| expr_comparisons '<' expr_plus_minus        {$$ = ast_new_node("<", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: LESS             */
 | expr_plus_minus                             {$$ = $1;}
 ;
 
 expr_plus_minus:
-  expr_plus_minus '+' expr_times_div_mod      {$$ = ast_new_node("+"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3  PLUS */
-| expr_plus_minus '-' expr_times_div_mod      {$$ = ast_new_node("-"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3: PLUS */
+  expr_plus_minus '+' expr_times_div_mod      {$$ = ast_new_node("+", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3  PLUS */
+| expr_plus_minus '-' expr_times_div_mod      {$$ = ast_new_node("-", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3: PLUS */
 | expr_times_div_mod                          {$$ = $1;}
 ;
 
 expr_times_div_mod:
-  expr_times_div_mod '*' expr_unary           {$$ = ast_new_node("*"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MULTIPLICATION */
-| expr_times_div_mod '/' expr_unary           {$$ = ast_new_node("/"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: DIVISION */
-| expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%"); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
+  expr_times_div_mod '*' expr_unary           {$$ = ast_new_node("*", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MULTIPLICATION */
+| expr_times_div_mod '/' expr_unary           {$$ = ast_new_node("/", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: DIVISION */
+| expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
 ;
 
-expr_unary: '-' expr_unary                    {$$ = ast_new_node("-"); ast_add_child($$, $2);}   /* 1: UNARY MINUS */
-| '!' expr_unary                              {$$ = ast_new_node("!"); ast_add_child($$, $2);}   /* 1: NEGATE      */
+expr_unary: '-' expr_unary                    {$$ = ast_new_node("-", UNKNOWN); ast_add_child($$, $2);}   /* 1: UNARY MINUS */
+| '!' expr_unary                              {$$ = ast_new_node("!", UNKNOWN); ast_add_child($$, $2);}   /* 1: NEGATE      */
 | expr_parentheses                            {$$ = $1;}
 ;
 
@@ -262,19 +264,19 @@ expr_parentheses:
 ;
 
 operands: 
-  TK_IDENTIFICADOR                            {$$ = ast_new_lexeme_node($1);}
-| TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1);}
-| TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1);}
-| TK_LIT_INT                                  {$$ = ast_new_lexeme_node($1);}
-| TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1);}
+  TK_IDENTIFICADOR                            {$$ = ast_new_lexeme_node($1, UNKNOWN);}
+| TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1, BOOL);}
+| TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1, BOOL);}
+| TK_LIT_INT                                  {$$ = ast_new_lexeme_node($1, INT);}
+| TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1, FLOAT);}
 | function_call                               {$$ = $1;}
 ;
 
 /* ======================= Primitives types ======================= */
 type:
-  TK_PR_INT
-| TK_PR_FLOAT
-| TK_PR_BOOL
+  TK_PR_INT     {$$ = INT;}
+| TK_PR_FLOAT   {$$ = FLOAT;}
+| TK_PR_BOOL    {$$ = BOOL;}
 ;
 %%
 

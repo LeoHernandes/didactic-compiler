@@ -15,7 +15,7 @@ lexical_data_t *lexical_data_new(int line_number, lexical_value_token_t token, c
     return data;
 }
 
-ast_t *ast_new_node(const char *label)
+ast_t *ast_new_node(const char *label, data_type_t type)
 {
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
@@ -27,12 +27,13 @@ ast_t *ast_new_node(const char *label)
         node->value = NULL;
         node->children = NULL;
         node->number_of_children = 0;
+        node->type = type;
     }
 
     return node;
 }
 
-ast_t *ast_new_lexeme_node(lexical_data_t *lex_data)
+ast_t *ast_new_lexeme_node(lexical_data_t *lex_data, data_type_t type)
 {
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
@@ -48,11 +49,12 @@ ast_t *ast_new_lexeme_node(lexical_data_t *lex_data)
 
     node->children = NULL;
     node->number_of_children = 0;
+    node->type = type;
 
     return node;
 }
 
-ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label)
+ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label, data_type_t type)
 {
     ast_t *node = NULL;
     node = malloc(sizeof(ast_t));
@@ -71,6 +73,7 @@ ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *la
 
     node->children = NULL;
     node->number_of_children = 0;
+    node->type = type;
 
     return node;
 }
