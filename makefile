@@ -15,7 +15,7 @@ _DEPS = parser.tab.h ast.h dataType.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # You MUST list all object files here
-_OBJ = main.o lex.yy.o parser.tab.o ast.o
+_OBJ = main.o lex.yy.o parser.tab.o ast.o dataType.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Default command =============================================

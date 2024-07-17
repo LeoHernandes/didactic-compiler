@@ -217,44 +217,44 @@ expression:
 ;
 
 expr_or:
-  expr_or TK_OC_OR expr_and                   {$$ = ast_new_node("|", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
+  expr_or TK_OC_OR expr_and                   {$$ = ast_new_node("|", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
 | expr_and                                    {$$ = $1;}
 ;
 
 expr_and:
-  expr_and TK_OC_AND expr_eq_ne               {$$ = ast_new_node("&", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 6: AND */
+  expr_and TK_OC_AND expr_eq_ne               {$$ = ast_new_node("&", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 6: AND */
 | expr_eq_ne                                  {$$ = $1;}
 ;
 
 expr_eq_ne:
-  expr_eq_ne TK_OC_EQ expr_comparisons        {$$ = ast_new_node("==", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: EQUAL     */
-| expr_eq_ne TK_OC_NE expr_comparisons        {$$ = ast_new_node("!=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: NOT EQUAL */
+  expr_eq_ne TK_OC_EQ expr_comparisons        {$$ = ast_new_node("==", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: EQUAL     */
+| expr_eq_ne TK_OC_NE expr_comparisons        {$$ = ast_new_node("!=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: NOT EQUAL */
 | expr_comparisons                            {$$ = $1;}
 ;
 
 expr_comparisons:
-  expr_comparisons TK_OC_GE expr_plus_minus   {$$ = ast_new_node(">=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: GREATER OR EQUAL */
-| expr_comparisons TK_OC_LE expr_plus_minus   {$$ = ast_new_node("<=", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: LESS OR EQUAL    */
-| expr_comparisons '>' expr_plus_minus        {$$ = ast_new_node(">", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: GREATER          */
-| expr_comparisons '<' expr_plus_minus        {$$ = ast_new_node("<", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: LESS             */
+  expr_comparisons TK_OC_GE expr_plus_minus   {$$ = ast_new_node(">=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: GREATER OR EQUAL */
+| expr_comparisons TK_OC_LE expr_plus_minus   {$$ = ast_new_node("<=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: LESS OR EQUAL    */
+| expr_comparisons '>' expr_plus_minus        {$$ = ast_new_node(">", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: GREATER          */
+| expr_comparisons '<' expr_plus_minus        {$$ = ast_new_node("<", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: LESS             */
 | expr_plus_minus                             {$$ = $1;}
 ;
 
 expr_plus_minus:
-  expr_plus_minus '+' expr_times_div_mod      {$$ = ast_new_node("+", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3  PLUS */
-| expr_plus_minus '-' expr_times_div_mod      {$$ = ast_new_node("-", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3: PLUS */
+  expr_plus_minus '+' expr_times_div_mod      {$$ = ast_new_node("+", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3  PLUS */
+| expr_plus_minus '-' expr_times_div_mod      {$$ = ast_new_node("-", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3: PLUS */
 | expr_times_div_mod                          {$$ = $1;}
 ;
 
 expr_times_div_mod:
-  expr_times_div_mod '*' expr_unary           {$$ = ast_new_node("*", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MULTIPLICATION */
-| expr_times_div_mod '/' expr_unary           {$$ = ast_new_node("/", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: DIVISION */
-| expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", UNKNOWN); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
+  expr_times_div_mod '*' expr_unary           {$$ = ast_new_node("*", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MULTIPLICATION */
+| expr_times_div_mod '/' expr_unary           {$$ = ast_new_node("/", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: DIVISION */
+| expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
 ;
 
-expr_unary: '-' expr_unary                    {$$ = ast_new_node("-", UNKNOWN); ast_add_child($$, $2);}   /* 1: UNARY MINUS */
-| '!' expr_unary                              {$$ = ast_new_node("!", UNKNOWN); ast_add_child($$, $2);}   /* 1: NEGATE      */
+expr_unary: '-' expr_unary                    {$$ = ast_new_node("-", $2->type); ast_add_child($$, $2);}   /* 1: UNARY MINUS */
+| '!' expr_unary                              {$$ = ast_new_node("!", $2->type); ast_add_child($$, $2);}   /* 1: NEGATE      */
 | expr_parentheses                            {$$ = $1;}
 ;
 
