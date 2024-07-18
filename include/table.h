@@ -27,13 +27,17 @@ typedef struct symbol
 
 typedef struct symbol_table
 {
-    symbol_t *table;
+    symbol_t **symbols;
     unsigned int length;
     unsigned int size;
 } symbol_table_t;
 
 symbol_table_t *symbol_table_new(unsigned int size);
-void symbol_table_free(symbol_table_t table);
+void symbol_table_free(symbol_table_t *table);
+int symbol_table_add(symbol_table_t *table, symbol_t symbol);
+symbol_t *symbol_table_get(symbol_table_t *table, char *lexeme);
+int _hash(symbol_table_t *table, char *lexeme);
+
 // ====================================== STACK ======================================
 
 typedef struct _node_stack
