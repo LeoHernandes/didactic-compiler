@@ -2,18 +2,25 @@
 
 symbol_table_t *symbol_table_new(unsigned int size)
 {
-    symbol_table_t *ht;
-    ht->size = size;
-    ht->symbols = malloc(ht->size * sizeof(symbol_t));
+    symbol_table_t *table;
 
-    int i;
-    for (i = 0; i < size; i++)
+    table->symbol_count = 0;
+    table->size = size;
+    table->symbols = malloc(size * sizeof(symbol_t *));
+
+    if (table->symbols == NULL)
     {
-        ht->symbols[i] = NULL;
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
     }
 
-    return ht;
-}
+    for (int i = 0; i < size; i++)
+    {
+        table->symbols[i] = NULL;
+    }
+
+    return table;
+};
 
 /*
 Hash function using a prime number
@@ -23,10 +30,8 @@ int _hash(symbol_table_t *table, char *lexeme)
     int pos = 1;
     size_t size = strlen(lexeme);
     const int prime = 31;
-    int prime_pow = 1;
-    int i;
 
-    for (i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
         pos += (lexeme[i] * i) % prime;
     }
@@ -43,22 +48,28 @@ void symbol_table_add(symbol_table_t *table, symbol_t symbol)
         pos = (pos + 1) % table->size;
     }
     table->symbols[pos] = &symbol;
-    table->length++;
-    if (table->length == table->size)
+    table->symbol_count++;
+
+    if (table->symbol_count >= table->size)
     {
         table->size *= 2;
-        table->symbols = realloc(table->symbols, table->size * sizeof(symbol_t));
+        table->symbols = realloc(table->symbols, table->size * sizeof(symbol_t *));
+
+        if (table->symbols == NULL)
+        {
+            printf("ERROR: %s couldn't reallocate memory\n", __FUNCTION__);
+        }
     }
 }
 
-symbol_t *symbol_table_get(symbol_table_t *table, char *lexeme)
+symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme)
 {
-    if (table->length == 0)
+    if (table->symbol_count == 0)
     {
         return NULL;
     }
-    int pos = _hash(table, lexeme);
 
+    int pos = _hash(table, lexeme);
     while (table->symbols[pos] != NULL)
     {
         if (strcmp(table->symbols[pos]->lex_data->lexeme, lexeme) == 0)
@@ -73,6 +84,13 @@ symbol_t *symbol_table_get(symbol_table_t *table, char *lexeme)
 table_stack_t *table_stack_new()
 {
     table_stack_t *stack = malloc(sizeof(table_stack_t));
+
+    if (stack == NULL)
+    {
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
+    }
+
     stack->top = NULL;
     stack->length = 0;
     return stack;
