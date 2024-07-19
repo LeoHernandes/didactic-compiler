@@ -43,7 +43,7 @@ int _hash(symbol_table_t *table, char *lexeme);
 typedef struct _node_stack
 {
     symbol_table_t *symbol_table;
-    symbol_table_t *prev;
+    struct _node_stack *prev;
 } _node_stack_t;
 
 typedef struct table_stack
@@ -53,7 +53,11 @@ typedef struct table_stack
 } table_stack_t;
 
 table_stack_t *table_stack_new();
+table_stack_t *table_stack_free();
 symbol_table_t *table_stack_pop(table_stack_t *stack);
+symbol_table_t *table_stack_peek(table_stack_t *stack);
 void table_stack_push(table_stack_t *stack, symbol_table_t *table);
+int table_stack_is_empty(table_stack_t *stack);
+_node_stack_t *_node_stack_new(symbol_table_t *table);
 
 #endif

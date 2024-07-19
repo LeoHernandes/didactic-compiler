@@ -69,3 +69,57 @@ symbol_t *symbol_table_get(symbol_table_t *table, char *lexeme)
     }
     return NULL;
 }
+
+table_stack_t *table_stack_new()
+{
+    table_stack_t *stack = malloc(sizeof(table_stack_t));
+    stack->top = NULL;
+    stack->length = 0;
+    return stack;
+}
+
+int table_stack_is_empty(table_stack_t *stack)
+{
+    return stack->length == 0;
+}
+
+_node_stack_t *_node_stack_new(symbol_table_t *table)
+{
+    _node_stack_t *node;
+    node->symbol_table = table;
+    node->prev = NULL;
+
+    return node;
+}
+
+void table_stack_push(table_stack_t *stack, symbol_table_t *table)
+{
+    _node_stack_t *node = _node_stack_new(table);
+    if (table_stack_is_empty(stack))
+    {
+        stack->top = node;
+    }
+    else
+    {
+        node->prev = stack->top;
+        stack->top = node;
+    }
+    stack->length++;
+}
+
+symbol_table_t *table_stack_pop(table_stack_t *stack)
+{
+    if (table_stack_is_empty(stack))
+    {
+        return NULL;
+    }
+    symbol_table_t *top_table = stack->top->symbol_table;
+    stack->top == stack->top->prev;
+    stack->length--;
+    return top_table;
+}
+
+symbol_table_t *table_stack_peek(table_stack_t *stack)
+{
+    return stack->top->symbol_table;
+}
