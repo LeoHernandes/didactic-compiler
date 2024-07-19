@@ -3,7 +3,8 @@
 symbol_table_t *symbol_table_new(unsigned int size)
 {
     symbol_table_t *ht;
-    ht->symbols = malloc(size * sizeof(symbol_t));
+    ht->size = size;
+    ht->symbols = malloc(ht->size * sizeof(symbol_t));
 
     int i;
     for (i = 0; i < size; i++)
@@ -12,7 +13,7 @@ symbol_table_t *symbol_table_new(unsigned int size)
     }
 
     return ht;
-};
+}
 
 /*
 Hash function using a prime number
@@ -31,9 +32,9 @@ int _hash(symbol_table_t *table, char *lexeme)
     }
     pos %= table->size;
     return pos;
-};
+}
 
-int symbol_table_add(symbol_table_t *table, symbol_t symbol)
+void symbol_table_add(symbol_table_t *table, symbol_t symbol)
 {
     int pos;
     pos = _hash(table, symbol.lex_data->lexeme);
@@ -43,8 +44,11 @@ int symbol_table_add(symbol_table_t *table, symbol_t symbol)
     }
     table->symbols[pos] = &symbol;
     table->length++;
-    // TODO: reallocate memory if length > size
-    return 0;
+    if (table->length == table->size)
+    {
+        table->size *= 2;
+        table->symbols = realloc(table->symbols, table->size * sizeof(symbol_t));
+    }
 }
 
 symbol_t *symbol_table_get(symbol_table_t *table, char *lexeme)
