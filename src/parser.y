@@ -5,10 +5,12 @@
 
 %{
 #include "ast.h"
+#include "table.h"
 
 int yylex(void);
 void yyerror (char const *mensagem);
 extern ast_t *ast_root;
+extern table_stack_t *table_stack;
 %}
 
 %define parse.error verbose

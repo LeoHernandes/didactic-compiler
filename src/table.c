@@ -2,7 +2,7 @@
 
 symbol_table_t *symbol_table_new(unsigned int size)
 {
-    symbol_table_t *table;
+    symbol_table_t *table = malloc(sizeof(symbol_table_t));
 
     table->symbol_count = 0;
     table->size = size;
@@ -103,7 +103,7 @@ int table_stack_is_empty(table_stack_t *stack)
 
 _node_stack_t *_node_stack_new(symbol_table_t *table)
 {
-    _node_stack_t *node;
+    _node_stack_t *node = malloc(sizeof(_node_stack_t));
     node->symbol_table = table;
     node->prev = NULL;
 
