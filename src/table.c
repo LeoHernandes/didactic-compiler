@@ -1,5 +1,15 @@
 #include "table.h"
 
+symbol_t *symbol_new(nature_t nature, data_type_t type, lexical_data_t *lex_data)
+{
+    symbol_t *symbol = malloc(sizeof(symbol_t));
+    symbol->nature = nature;
+    symbol->type = type;
+    symbol->lex_data = lex_data;
+
+    return symbol;
+}
+
 symbol_table_t *symbol_table_new(unsigned int size)
 {
     symbol_table_t *table = malloc(sizeof(symbol_table_t));
@@ -108,6 +118,12 @@ _node_stack_t *_node_stack_new(symbol_table_t *table)
     node->prev = NULL;
 
     return node;
+}
+
+void table_stack_push_default_table(table_stack_t *stack)
+{
+    symbol_table_t *table = symbol_table_new(DEFAULT_TABLE_SIZE);
+    table_stack_push(stack, table);
 }
 
 void table_stack_push(table_stack_t *stack, symbol_table_t *table)

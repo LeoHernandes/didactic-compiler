@@ -138,7 +138,12 @@ function_body:
 
 /* ======================= Commands ======================= */
 command_block:
-  '{' commands_list '}'                   {$$ = $2;}
+  '{' commands_list '}'
+  {
+    table_stack_push_default_table(table_stack);
+    $$ = $2;
+    table_stack_pop(table_stack);
+  }
 | '{' '}'                                 {$$ = NULL;}
 ;
 
