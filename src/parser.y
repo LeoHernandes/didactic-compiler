@@ -208,18 +208,17 @@ command:
 attribution_command: 
   TK_IDENTIFICADOR '=' expression         
   {
-    symbol_t * symbol = table_stack_find_symbol_on_top_or_null(table_stack, $1->lexeme);
-    if(symbol != NULL && symbol->nature == FUNCTION_NATURE)
-    {
-      print_function_as_variable_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
-      return ERR_FUNCTION;
-    }
-
-    symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    symbol_t * symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
     if(symbol == NULL){
       print_undeclared_usage_error($1->lexeme, $1->line_number);
       return ERR_UNDECLARED;
     } 
+
+    if(symbol->nature == FUNCTION_NATURE)
+    {
+      print_function_as_variable_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
+      return ERR_FUNCTION;
+    }
 
     $$ = ast_new_node("=", symbol->type);
     ast_add_child($$, ast_new_lexeme_node($1, symbol->type));
@@ -231,18 +230,18 @@ attribution_command:
 function_call:
   TK_IDENTIFICADOR function_arguments     
   {
-    symbol_t * symbol = table_stack_find_symbol_on_top_or_null(table_stack, $1->lexeme);
-    if(symbol != NULL && symbol->nature == IDENTIFIER_NATURE)
-    {
-      print_variable_as_function_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
-      return ERR_VARIABLE;
-    }
-
-    symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    symbol_t * symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    
     if(symbol == NULL){
       print_undeclared_usage_error($1->lexeme, $1->line_number);
       return ERR_UNDECLARED;
     } 
+
+    if(symbol->nature == IDENTIFIER_NATURE)
+    {
+      print_variable_as_function_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
+      return ERR_VARIABLE;
+    }
 
     $$ = ast_new_lexeme_node_prefix_label($1, "call ", symbol->type);
     ast_add_child($$, $2);
@@ -336,7 +335,22 @@ expr_parentheses:
 ;
 
 operands: 
-  TK_IDENTIFICADOR                            {$$ = ast_new_lexeme_node($1, UNKNOWN);}
+  TK_IDENTIFICADOR                            
+  {
+    symbol_t * symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    if(symbol == NULL){
+      print_undeclared_usage_error($1->lexeme, $1->line_number);
+      return ERR_UNDECLARED;
+    } 
+
+    if(symbol->nature == FUNCTION_NATURE)
+    {
+      print_function_as_variable_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
+      return ERR_FUNCTION;
+    }
+
+    $$ = ast_new_lexeme_node($1, UNKNOWN);
+  }
 | TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1, BOOL);}
 | TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1, BOOL);}
 | TK_LIT_INT                                  {$$ = ast_new_lexeme_node($1, INT);}

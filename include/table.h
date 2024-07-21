@@ -73,7 +73,6 @@ void table_stack_push(table_stack_t *stack, symbol_table_t *table);
 void table_stack_push_default_table(table_stack_t *stack);
 int table_stack_is_empty(table_stack_t *stack);
 _node_stack_t *_node_stack_new(symbol_table_t *table);
-symbol_t *table_stack_find_symbol_on_top_or_null(table_stack_t *stack, char *lexeme);
 symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme);
 
 #endif
