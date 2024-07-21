@@ -223,3 +223,23 @@ symbol_table_t *table_stack_peek(table_stack_t *stack)
 {
     return stack->top->symbol_table;
 }
+
+symbol_t *table_stack_find_symbol_on_top_or_null(table_stack_t *stack, char *lexeme)
+{
+    return symbol_table_get_or_null(stack->top->symbol_table, lexeme);
+}
+
+symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme)
+{
+    _node_stack_t *current_stack_node = stack->top;
+    symbol_t *symbol = NULL;
+    for (int i = 0; i < stack->length; i++)
+    {
+        symbol = symbol_table_get_or_null(current_stack_node->symbol_table, lexeme);
+        if (symbol != NULL)
+            return symbol;
+
+        current_stack_node = current_stack_node->prev;
+    }
+    return NULL;
+}

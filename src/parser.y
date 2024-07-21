@@ -6,6 +6,7 @@
 %{
 #include "ast.h"
 #include "table.h"
+#include "semanticErrors.h"
 
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -51,6 +52,7 @@ extern table_stack_t *table_stack;
 %type<tree_node> function_header
 %type<tree_node> function_body
 %type<tree_node> command_block
+%type<tree_node> command_block_without_scope_rules
 %type<tree_node> commands_list
 %type<tree_node> command
 %type<tree_node> attribution_command
@@ -161,12 +163,17 @@ parameters_list:
 ;
 
 function_body:
-  command_block                                     {$$ = $1;}
+  command_block_without_scope_rules                 {$$ = $1;}
 ;
 
 /* ======================= Commands ======================= */
-command_block:
+command_block_without_scope_rules:
   '{' commands_list '}'                             {$$ = $2;}
+| '{' '}'                                           {$$ = NULL;}
+;
+
+command_block:
+  '{' CREATE_SCOPE commands_list REMOVE_SCOPE '}'   {$$ = $3;}
 | '{' '}'                                           {$$ = NULL;}
 ;
 
@@ -199,7 +206,25 @@ command:
 
 /* ======================= Commands: attribution */
 attribution_command: 
-  TK_IDENTIFICADOR '=' expression         {$$ = ast_new_node("=", UNKNOWN); ast_add_child($$, ast_new_lexeme_node($1, UNKNOWN)); ast_add_child($$, $3);}
+  TK_IDENTIFICADOR '=' expression         
+  {
+    symbol_t * symbol = table_stack_find_symbol_on_top_or_null(table_stack, $1->lexeme);
+    if(symbol != NULL && symbol->nature == FUNCTION_NATURE)
+    {
+      print_function_as_variable_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
+      return ERR_FUNCTION;
+    }
+
+    symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    if(symbol == NULL){
+      print_undeclared_usage_error($1->lexeme, $1->line_number);
+      return ERR_UNDECLARED;
+    } 
+
+    $$ = ast_new_node("=", symbol->type);
+    ast_add_child($$, ast_new_lexeme_node($1, symbol->type));
+    ast_add_child($$, $3);
+  }
 ;
 
 /* ======================= Commands: function call */
