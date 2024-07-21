@@ -84,6 +84,18 @@ void symbol_table_add(symbol_table_t *table, symbol_t *symbol)
     }
 }
 
+void symbol_table_fill_unknown_types(symbol_table_t *table, data_type_t correct_type)
+{
+    for (int pos = 0; pos < table->size; pos++)
+    {
+        symbol_t *symbol = table->symbols[pos];
+        if (symbol != NULL && symbol->type == UNKNOWN)
+        {
+            symbol->type = correct_type;
+        }
+    }
+}
+
 symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme)
 {
     if (table->symbol_count == 0)

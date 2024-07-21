@@ -15,12 +15,14 @@ extern table_stack_t *table_stack;
 
 %define parse.error verbose
 %code requires {#include "ast.h"}
+%code requires {#include "table.h"}
 
 
 %union {
   lexical_data_t *value;
   ast_t *tree_node;
   data_type_t data_type;
+  symbol_t **symbols;
 }
 
 %token TK_PR_INT
@@ -73,6 +75,7 @@ extern table_stack_t *table_stack;
 %type<tree_node> expr_parentheses
 %type<tree_node> operands
 %type<data_type> type
+%type<symbols> variables_list
 
 %%
 
@@ -106,17 +109,20 @@ element:
 
 /* ======================= Variable declaration ======================= */
 variable_declaration:
-  type variables_list                   
+  type variables_list   {symbol_table_fill_unknown_types(table_stack->top->symbol_table, $1);}                
 ;
 
 variables_list:
   variables_list ';' TK_IDENTIFICADOR 
   {
-    // devolver uma lista de simbolos de tipo unknown
-    // preencher o tipo na regra acima e só então colocar na tabela do escopo atual
     symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, UNKNOWN, $3);
+    symbol_table_add(table_stack->top->symbol_table, symbol);
   }
 | TK_IDENTIFICADOR
+  {
+    symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, UNKNOWN, $1);
+    symbol_table_add(table_stack->top->symbol_table, symbol);
+  }
 ;
 
 /* ======================= Function declaration ======================= */
@@ -134,22 +140,25 @@ function_parameters:
 
 parameters_list:
   parameters_list ';' type TK_IDENTIFICADOR
+  {
+    symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, $3, $4);
+    symbol_table_add(table_stack->top->symbol_table, symbol);
+  }
 | type TK_IDENTIFICADOR
+  {
+    symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, $1, $2);
+    symbol_table_add(table_stack->top->symbol_table, symbol);
+  }
 ;
 
 function_body:
-  command_block                           {$$ = $1;}
+  command_block
 ;
 
 /* ======================= Commands ======================= */
 command_block:
-  '{' commands_list '}'
-  {
-    table_stack_push_default_table(table_stack);
-    $$ = $2;
-    table_stack_pop(table_stack);
-  }
-| '{' '}'                                 {$$ = NULL;}
+  CREATE_SCOPE '{'  commands_list '}' REMOVE_SCOPE  {$$ = $3;}
+| '{' '}'                                           {$$ = NULL;}
 ;
 
 commands_list: command commands_list
@@ -299,7 +308,6 @@ CREATE_SCOPE:
 
 REMOVE_SCOPE: 
 {
-  printf("%d", table_stack->length);
   symbol_table_t* table = table_stack_pop(table_stack);
   symbol_table_free(table);
 };
