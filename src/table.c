@@ -61,15 +61,15 @@ int _hash(symbol_table_t *table, char *lexeme)
     return pos;
 }
 
-void symbol_table_add(symbol_table_t *table, symbol_t symbol)
+void symbol_table_add(symbol_table_t *table, symbol_t *symbol)
 {
     int pos;
-    pos = _hash(table, symbol.lex_data->lexeme);
+    pos = _hash(table, symbol->lex_data->lexeme);
     while (table->symbols[pos] != NULL)
     {
         pos = (pos + 1) % table->size;
     }
-    table->symbols[pos] = &symbol;
+    table->symbols[pos] = symbol;
     table->symbol_count++;
 
     if (table->symbol_count >= table->size)

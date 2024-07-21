@@ -77,9 +77,9 @@ extern table_stack_t *table_stack;
 %%
 
 /* ======================= Program generic structure ======================= */
-program:
-  elements_list                         {ast_root = $1;}
-|                                       {ast_root = NULL;}
+program: 
+  CREATE_SCOPE elements_list REMOVE_SCOPE           {ast_root = $2;}
+|                                                   {ast_root = NULL;}
 ;
 
 elements_list: element elements_list
@@ -110,7 +110,12 @@ variable_declaration:
 ;
 
 variables_list:
-  variables_list ';' TK_IDENTIFICADOR
+  variables_list ';' TK_IDENTIFICADOR 
+  {
+    // devolver uma lista de simbolos de tipo unknown
+    // preencher o tipo na regra acima e só então colocar na tabela do escopo atual
+    symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, UNKNOWN, $3);
+  }
 | TK_IDENTIFICADOR
 ;
 
@@ -285,7 +290,22 @@ type:
 | TK_PR_FLOAT   {$$ = FLOAT;}
 | TK_PR_BOOL    {$$ = BOOL;}
 ;
+
+/* ==\===================== Semantic Analysis Methods ======================= */
+CREATE_SCOPE: 
+{
+  table_stack_push_default_table(table_stack);
+};
+
+REMOVE_SCOPE: 
+{
+  printf("%d", table_stack->length);
+  symbol_table_t* table = table_stack_pop(table_stack);
+  symbol_table_free(table);
+};
 %%
+
+
 
 #include <stdio.h>
 
