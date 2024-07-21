@@ -5,7 +5,7 @@
 
 %{
 #include "ast.h"
-#include "table.h"
+#include "tableStack.h"
 #include "semanticErrors.h"
 
 int yylex(void);

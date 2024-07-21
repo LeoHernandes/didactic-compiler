@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "ast.h"
-#include "table.h"
+#include "tableStack.h"
 
 extern int yyparse(void);
 extern int yylex_destroy(void);
