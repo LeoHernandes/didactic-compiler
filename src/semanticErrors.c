@@ -16,3 +16,9 @@ void print_function_as_variable_error(char *identifier, int declaration_line, in
     printf("ERROR: function identifier being used as variable at line %d. ", usage_line);
     printf("Identifier '%s' was previously declared as function at line %d.\n", identifier, declaration_line);
 }
+
+void print_variable_as_function_error(char *identifier, int declaration_line, int usage_line)
+{
+    printf("ERROR: variable identifier being used as function at line %d. ", usage_line);
+    printf("Identifier '%s' was previously declared as variable at line %d.\n", identifier, declaration_line);
+}

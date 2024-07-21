@@ -229,7 +229,24 @@ attribution_command:
 
 /* ======================= Commands: function call */
 function_call:
-  TK_IDENTIFICADOR function_arguments     {$$ = ast_new_lexeme_node_prefix_label($1, "call ", UNKNOWN); ast_add_child($$, $2);}
+  TK_IDENTIFICADOR function_arguments     
+  {
+    symbol_t * symbol = table_stack_find_symbol_on_top_or_null(table_stack, $1->lexeme);
+    if(symbol != NULL && symbol->nature == IDENTIFIER_NATURE)
+    {
+      print_variable_as_function_error($1->lexeme, symbol->lex_data->line_number, $1->line_number);
+      return ERR_VARIABLE;
+    }
+
+    symbol = table_stack_find_symbol_or_null(table_stack, $1->lexeme);
+    if(symbol == NULL){
+      print_undeclared_usage_error($1->lexeme, $1->line_number);
+      return ERR_UNDECLARED;
+    } 
+
+    $$ = ast_new_lexeme_node_prefix_label($1, "call ", symbol->type);
+    ast_add_child($$, $2);
+  }
 ;
 
 function_arguments:
