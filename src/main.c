@@ -26,5 +26,7 @@ int main(int argc, char **argv)
     ast_free(ast_root);
   }
 
+  table_stack_free(table_stack);
+
   return ret;
 }

@@ -56,7 +56,7 @@ typedef struct table_stack
 } table_stack_t;
 
 table_stack_t *table_stack_new();
-table_stack_t *table_stack_free();
+void table_stack_free(table_stack_t *stack);
 symbol_table_t *table_stack_pop(table_stack_t *stack);
 symbol_table_t *table_stack_peek(table_stack_t *stack);
 void table_stack_push(table_stack_t *stack, symbol_table_t *table);

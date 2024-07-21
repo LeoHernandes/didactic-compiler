@@ -32,6 +32,18 @@ symbol_table_t *symbol_table_new(unsigned int size)
     return table;
 };
 
+void symbol_table_free(symbol_table_t *table)
+{
+    if (table != NULL)
+    {
+        if (table->symbols != NULL)
+        {
+            free(table->symbols);
+        }
+        free(table);
+    }
+}
+
 /*
 Hash function using a prime number
 */
@@ -106,6 +118,24 @@ table_stack_t *table_stack_new()
     return stack;
 }
 
+void table_stack_free(table_stack_t *stack)
+{
+    if (stack != NULL)
+    {
+        if (stack->length > 0)
+        {
+            _node_stack_t *current_node = stack->top;
+            for (int i = 0; i < stack->length; i++)
+            {
+                symbol_table_free(current_node->symbol_table);
+                current_node = current_node->prev;
+            }
+            free(stack->top);
+        }
+        free(stack);
+    }
+}
+
 int table_stack_is_empty(table_stack_t *stack)
 {
     return stack->length == 0;
@@ -114,6 +144,13 @@ int table_stack_is_empty(table_stack_t *stack)
 _node_stack_t *_node_stack_new(symbol_table_t *table)
 {
     _node_stack_t *node = malloc(sizeof(_node_stack_t));
+
+    if (node == NULL)
+    {
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
+    }
+
     node->symbol_table = table;
     node->prev = NULL;
 
