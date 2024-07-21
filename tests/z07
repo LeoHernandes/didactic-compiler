@@ -1,5 +1,0 @@
-()|int/f{
-  int a; b; c; d; e,
-  a = 3,
-  return 10,
-}

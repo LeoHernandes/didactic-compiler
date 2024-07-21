@@ -1,5 +1,0 @@
-(int a)|int/f
-{
-  int a,
-  c = 3 * f(a) + a,
-}
