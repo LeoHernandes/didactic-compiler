@@ -1,0 +1,6 @@
+//ERR_UNDECLARED
+() | int / f {
+    float car,
+    a = car,
+    return 0,
+}

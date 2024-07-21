@@ -1,0 +1,6 @@
+//ERR_VARIABLE
+() | int / f {
+  int a,
+  a(),
+  return 0,
+}

@@ -1,0 +1,5 @@
+//ERR_DECLARED
+() | int / f {
+    int a,
+    float a,
+}

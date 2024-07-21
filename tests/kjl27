@@ -1,0 +1,4 @@
+//ERR_DECLARED
+(int a; int b; int a) => int / f
+{
+}
