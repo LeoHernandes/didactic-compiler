@@ -14,6 +14,12 @@ symbol_table_t *symbol_table_new(unsigned int size)
 {
     symbol_table_t *table = malloc(sizeof(symbol_table_t));
 
+    if (table == NULL)
+    {
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
+    }
+
     table->symbol_count = 0;
     table->size = size;
     table->symbols = malloc(size * sizeof(symbol_t *));
@@ -61,12 +67,21 @@ int _hash(symbol_table_t *table, char *lexeme)
     return pos;
 }
 
-void symbol_table_add(symbol_table_t *table, symbol_t *symbol)
+short symbol_table_add(symbol_table_t *table, symbol_t *symbol)
 {
     int pos;
-    pos = _hash(table, symbol->lex_data->lexeme);
+    char *lexeme = symbol->lex_data->lexeme;
+
+    pos = _hash(table, lexeme);
     while (table->symbols[pos] != NULL)
     {
+        // If symbol already exists in table
+        if (strcmp(lexeme, table->symbols[pos]->lex_data->lexeme) == 0)
+        {
+            print_duplicated_declaration_error(lexeme, table->symbols[pos]->lex_data->line_number, symbol->lex_data->line_number);
+            return 0;
+        }
+
         pos = (pos + 1) % table->size;
     }
     table->symbols[pos] = symbol;
@@ -82,6 +97,8 @@ void symbol_table_add(symbol_table_t *table, symbol_t *symbol)
             printf("ERROR: %s couldn't reallocate memory\n", __FUNCTION__);
         }
     }
+
+    return 1;
 }
 
 void symbol_table_fill_unknown_types(symbol_table_t *table, data_type_t correct_type)

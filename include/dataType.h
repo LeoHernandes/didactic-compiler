@@ -11,9 +11,8 @@ enum data_type
     FLOAT,
 
     /*
-     * Currently represents unwanted states in semantic analysis
-     * or missing implementations that require the symbols table (TODO)
-     * NOTE: This should be an unnused type at the end of E4 so we can remove it
+     * Data type used only as a temporary value
+     * If a searched symbol has an unknown type, there is an error in code analysis
      */
     UNKNOWN,
 };

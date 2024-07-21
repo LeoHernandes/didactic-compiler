@@ -3,6 +3,8 @@
 
 #include "dataType.h"
 #include "ast.h"
+#include "semanticErrors.h"
+#include <string.h>
 
 #define ERR_UNDECLARED 10 // 2.3
 #define ERR_DECLARED 11   // 2.3
@@ -37,7 +39,14 @@ typedef struct symbol_table
 
 symbol_table_t *symbol_table_new(unsigned int size);
 void symbol_table_free(symbol_table_t *table);
-void symbol_table_add(symbol_table_t *table, symbol_t *symbol);
+
+/*
+* Adds a symbol to table
+* Returns:
+    1 - Insertion was successful
+    0 - ERROR: symbol already exists
+*/
+short symbol_table_add(symbol_table_t *table, symbol_t *symbol);
 void symbol_table_fill_unknown_types(symbol_table_t *table, data_type_t correct_type);
 symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme);
 int _hash(symbol_table_t *table, char *lexeme);

@@ -116,22 +116,32 @@ variables_list:
   variables_list ';' TK_IDENTIFICADOR 
   {
     symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, UNKNOWN, $3);
-    symbol_table_add(table_stack->top->symbol_table, symbol);
+    short success = symbol_table_add(table_stack->top->symbol_table, symbol);
+    if(!success) return ERR_DECLARED;
+
   }
 | TK_IDENTIFICADOR
   {
     symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, UNKNOWN, $1);
-    symbol_table_add(table_stack->top->symbol_table, symbol);
+    short success = symbol_table_add(table_stack->top->symbol_table, symbol);
+    if(!success) return ERR_DECLARED;
   }
 ;
 
 /* ======================= Function declaration ======================= */
 function_declaration:
-  function_header function_body                                   {$$ = $1; ast_add_child($$, $2);}
+  CREATE_SCOPE function_header function_body REMOVE_SCOPE       {$$ = $2; ast_add_child($$, $3);}
 ;
 
 function_header:
-  function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR          {$$ = ast_new_lexeme_node($5, $3);}
+  function_parameters TK_OC_OR type '/' TK_IDENTIFICADOR         
+  {
+    $$ = ast_new_lexeme_node($5, $3);
+    
+    symbol_t* symbol = symbol_new(FUNCTION_NATURE, $3, $5);
+    short success = symbol_table_add(table_stack->top->prev->symbol_table, symbol);
+    if(!success) return ERR_DECLARED;
+  }
 ;
 
 function_parameters:
@@ -142,12 +152,14 @@ parameters_list:
   parameters_list ';' type TK_IDENTIFICADOR
   {
     symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, $3, $4);
-    symbol_table_add(table_stack->top->symbol_table, symbol);
+    short success = symbol_table_add(table_stack->top->symbol_table, symbol);
+    if(!success) return ERR_DECLARED;
   }
 | type TK_IDENTIFICADOR
   {
     symbol_t* symbol = symbol_new(IDENTIFIER_NATURE, $1, $2);
-    symbol_table_add(table_stack->top->symbol_table, symbol);
+    short success = symbol_table_add(table_stack->top->symbol_table, symbol);
+    if(!success) return ERR_DECLARED;
   }
 ;
 
@@ -157,7 +169,7 @@ function_body:
 
 /* ======================= Commands ======================= */
 command_block:
-  CREATE_SCOPE '{'  commands_list '}' REMOVE_SCOPE  {$$ = $3;}
+  '{'  commands_list '}'                            {$$ = $2;}
 | '{' '}'                                           {$$ = NULL;}
 ;
 
