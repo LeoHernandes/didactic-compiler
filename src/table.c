@@ -214,7 +214,7 @@ symbol_table_t *table_stack_pop(table_stack_t *stack)
         return NULL;
     }
     symbol_table_t *top_table = stack->top->symbol_table;
-    stack->top == stack->top->prev;
+    stack->top = stack->top->prev;
     stack->length--;
     return top_table;
 }
