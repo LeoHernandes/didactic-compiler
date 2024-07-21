@@ -15,14 +15,12 @@ extern table_stack_t *table_stack;
 
 %define parse.error verbose
 %code requires {#include "ast.h"}
-%code requires {#include "table.h"}
 
 
 %union {
   lexical_data_t *value;
   ast_t *tree_node;
   data_type_t data_type;
-  symbol_t **symbols;
 }
 
 %token TK_PR_INT
@@ -75,7 +73,6 @@ extern table_stack_t *table_stack;
 %type<tree_node> expr_parentheses
 %type<tree_node> operands
 %type<data_type> type
-%type<symbols> variables_list
 
 %%
 
@@ -164,12 +161,12 @@ parameters_list:
 ;
 
 function_body:
-  command_block
+  command_block                                     {$$ = $1;}
 ;
 
 /* ======================= Commands ======================= */
 command_block:
-  '{'  commands_list '}'                            {$$ = $2;}
+  '{' commands_list '}'                             {$$ = $2;}
 | '{' '}'                                           {$$ = NULL;}
 ;
 
