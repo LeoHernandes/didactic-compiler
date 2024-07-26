@@ -11,11 +11,11 @@ CDIR=src
 PROJECT = etapa5
 
 # You MUST list all header files here
-_DEPS = parser.tab.h ast.h dataType.h symbolTable.h tableStack.h semanticErrors.h
+_DEPS = parser.tab.h ast.h dataType.h symbolTable.h tableStack.h semanticErrors.h iloc.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # You MUST list all object files here
-_OBJ = main.o lex.yy.o parser.tab.o ast.o dataType.o symbolTable.o tableStack.o semanticErrors.o
+_OBJ = main.o lex.yy.o parser.tab.o ast.o dataType.o symbolTable.o tableStack.o semanticErrors.o iloc.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Default command =============================================
