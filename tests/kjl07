@@ -1,9 +1,0 @@
-//ERR_UNDECLARED
-() | int / f {
-  if (a) {
-    a = b,
-  }else{
-    a = 3,
-  },
-  return 0,
-}

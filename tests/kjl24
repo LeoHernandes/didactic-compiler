@@ -1,6 +1,0 @@
-//ERR_VARIABLE
-int a,
-() | int / f {
-    a = a(),
-    return 0,
-}

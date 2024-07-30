@@ -1,6 +1,0 @@
-//ERR_UNDECLARED
-() | int / f {
-    float z,
-    a = z,
-    return 0,
-}
