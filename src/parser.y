@@ -329,8 +329,21 @@ expr_times_div_mod:
 | expr_unary                                  {$$ = $1;}
 ;
 
-expr_unary: '-' expr_unary                    {$$ = ast_new_node("-", $2->type); ast_add_child($$, $2);}   /* 1: UNARY MINUS */
-| '!' expr_unary                              {$$ = ast_new_node("!", $2->type); ast_add_child($$, $2);}   /* 1: NEGATE      */
+expr_unary: 
+  '-' expr_unary                                              /* 1: UNARY MINUS */
+{
+  $$ = ast_new_node("-", $2->type); ast_add_child($$, $2);
+
+  $$->temp = generate_register();
+  $$->code = $2->code;
+
+  iloc_instruction_t multI = new_3_operand_instruction("multI", $2->temp, "-1", $$->temp);
+  push_instruction($$->code, multI);
+}   
+| '!' expr_unary                                              /* 1: NEGATE      */
+{
+  $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
+}   
 | expr_parentheses                            {$$ = $1;}
 ;
 
@@ -354,11 +367,28 @@ operands:
       return ERR_FUNCTION;
     }
 
+    char* scope = table_stack_find_symbol_scope(table_stack, $1->lexeme);
     $$ = ast_new_lexeme_node($1, UNKNOWN);
+
+    $$->temp = generate_register();
+    $$->code = new_program();
+
+    char* offset_str = get_offset_string(symbol->offset);
+    iloc_instruction_t loadai = new_3_operand_instruction("loadAI", scope, offset_str, $$->temp);
+    push_instruction($$->code, loadai);
   }
 | TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1, BOOL);}
 | TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1, BOOL);}
-| TK_LIT_INT                                  {$$ = ast_new_lexeme_node($1, INT);}
+| TK_LIT_INT                                  
+{
+  $$ = ast_new_lexeme_node($1, INT);
+  
+  $$->temp = generate_register();
+  $$->code = new_program();
+
+  iloc_instruction_t loadi = new_2_operand_instruction("loadI", $1->lexeme, $$->temp);
+  push_instruction($$->code, loadi);
+}
 | TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1, FLOAT);}
 | function_call                               {$$ = $1;}
 ;

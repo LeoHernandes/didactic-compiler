@@ -101,3 +101,14 @@ symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme)
     }
     return NULL;
 }
+
+char *table_stack_find_symbol_scope(table_stack_t *stack, char *lexeme)
+{
+    symbol_t *symbol = NULL;
+    symbol = symbol_table_get_or_null(stack->top->symbol_table, lexeme);
+    if (symbol != NULL)
+    {
+        return "rfp";
+    }
+    return "rbss";
+}

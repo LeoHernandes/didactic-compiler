@@ -6,6 +6,7 @@ symbol_t *symbol_new(nature_t nature, data_type_t type, lexical_data_t *lex_data
     symbol->nature = nature;
     symbol->type = type;
     symbol->lex_data = lex_data;
+    symbol->offset = 0;
 
     return symbol;
 }
@@ -84,8 +85,9 @@ short symbol_table_add(symbol_table_t *table, symbol_t *symbol)
 
         pos = (pos + 1) % table->size;
     }
-    table->symbols[pos] = symbol;
     table->symbol_count++;
+    symbol->offset = table->symbol_count * 4; // only integers
+    table->symbols[pos] = symbol;
 
     if (table->symbol_count >= table->size)
     {

@@ -20,7 +20,7 @@ typedef struct symbol
     nature_t nature;
     data_type_t type;
     lexical_data_t *lex_data;
-
+    unsigned int offset;
 } symbol_t;
 
 symbol_t *symbol_new(nature_t nature, data_type_t type, lexical_data_t *lex_data);

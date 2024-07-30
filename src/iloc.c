@@ -2,35 +2,35 @@
 
 /* ================================== ILOC Operation (instruction) ================================== */
 
-iloc_instruction_t new_1_operand_instruction(iloc_op_code_t op_code, char *operand)
+iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest)
 {
     iloc_instruction_t instruction = {
         .op_code = op_code,
-        .operand_1 = operand,
+        .operand_1 = NULL,
         .operand_2 = NULL,
-        .operand_3 = NULL};
+        .operand_3 = dest};
 
     return instruction;
 }
 
-iloc_instruction_t new_2_operand_instruction(iloc_op_code_t op_code, char *operand_1, char *operand_2)
+iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *dest)
+{
+    iloc_instruction_t instruction = {
+        .op_code = op_code,
+        .operand_1 = src,
+        .operand_2 = NULL,
+        .operand_3 = dest};
+
+    return instruction;
+}
+
+iloc_instruction_t new_3_operand_instruction(char *op_code, char *operand_1, char *operand_2, char *dest)
 {
     iloc_instruction_t instruction = {
         .op_code = op_code,
         .operand_1 = operand_1,
         .operand_2 = operand_2,
-        .operand_3 = NULL};
-
-    return instruction;
-}
-
-iloc_instruction_t new_3_operand_instruction(iloc_op_code_t op_code, char *operand_1, char *operand_2, char *operand_3)
-{
-    iloc_instruction_t instruction = {
-        .op_code = op_code,
-        .operand_1 = operand_1,
-        .operand_2 = operand_2,
-        .operand_3 = operand_3};
+        .operand_3 = dest};
 
     return instruction;
 }
@@ -70,7 +70,7 @@ void concat_programs(iloc_program_t *dest, iloc_program_t *src)
     dest->length = new_length;
 }
 
-void push_operation(iloc_program_t *program, iloc_instruction_t instruction)
+void push_instruction(iloc_program_t *program, iloc_instruction_t instruction)
 {
     program->length++;
     program->instructions = realloc(program->instructions, sizeof(iloc_instruction_t) * program->length);
@@ -131,5 +131,20 @@ char *generate_register()
     sprintf(buffer, "r%d", register_number);
     register_number++;
 
+    return buffer;
+}
+
+char *get_offset_string(unsigned int offset)
+{
+    unsigned int buffer_size = number_of_digits(offset);
+    char *buffer = malloc(sizeof(char) * buffer_size);
+
+    if (buffer == NULL)
+    {
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
+    }
+
+    sprintf(buffer, "%d", offset);
     return buffer;
 }

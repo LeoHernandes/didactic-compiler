@@ -28,6 +28,9 @@ ast_t *ast_new_node(const char *label, data_type_t type)
         node->children = NULL;
         node->number_of_children = 0;
         node->type = type;
+
+        node->temp = NULL;
+        node->code = NULL;
     }
 
     return node;
@@ -50,6 +53,9 @@ ast_t *ast_new_lexeme_node(lexical_data_t *lex_data, data_type_t type)
     node->children = NULL;
     node->number_of_children = 0;
     node->type = type;
+
+    node->temp = NULL;
+    node->code = NULL;
 
     return node;
 }
@@ -75,6 +81,9 @@ ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *la
     node->number_of_children = 0;
     node->type = type;
 
+    node->temp = NULL;
+    node->code = NULL;
+
     return node;
 }
 
@@ -90,6 +99,12 @@ void ast_free(ast_t *tree)
         free(tree->label);
         free(tree->value);
         free(tree);
+
+        if (tree->temp != NULL)
+            free(tree->temp);
+
+        if (tree->code != NULL)
+            free(tree->code);
     }
 }
 

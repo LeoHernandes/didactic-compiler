@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "dataType.h"
+#include "iloc.h"
 
 enum lexical_value_token
 {
@@ -33,6 +34,9 @@ typedef struct ast
     int number_of_children;
     struct ast **children;
     data_type_t type;
+
+    iloc_program_t *code;
+    char *temp;
 } ast_t;
 
 /*
