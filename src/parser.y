@@ -343,6 +343,17 @@ expr_unary:
 | '!' expr_unary                                              /* 1: NEGATE      */
 {
   $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
+
+  $$->temp = generate_register();
+  $$->code = $2->code;
+
+  char* temp_for_const_zero = generate_register();
+  iloc_instruction_t loadi = new_2_operand_instruction("loadI", 0, temp_for_const_zero);
+  iloc_instruction_t cmp_eq = new_3_operand_instruction("cmp_EQ", $2->temp, temp_for_const_zero, $$->temp);
+  push_instruction($$->code, loadi);
+  push_instruction($$->code, cmp_eq);
+
+  free(temp_for_const_zero);
 }   
 | expr_parentheses                            {$$ = $1;}
 ;
