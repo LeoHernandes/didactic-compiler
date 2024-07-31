@@ -293,116 +293,212 @@ expression:
 ;
 
 expr_or:
-  expr_or TK_OC_OR expr_and                   {$$ = ast_new_node("|", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 7: OR  */
+  expr_or TK_OC_OR expr_and                             ///////////* 7: OR *///////////       
+  {
+    $$ = ast_new_node("|", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+    
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t or = new_3_operand_instruction("or", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, or);
+  }   
 | expr_and                                    {$$ = $1;}
 ;
 
 expr_and:
-  expr_and TK_OC_AND expr_eq_ne               {$$ = ast_new_node("&", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 6: AND */
+  expr_and TK_OC_AND expr_eq_ne                         ///////////* 6: AND *///////////        
+  {
+    $$ = ast_new_node("&", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t and = new_3_operand_instruction("and", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, and);
+  }
 | expr_eq_ne                                  {$$ = $1;}
 ;
 
 expr_eq_ne:
-  expr_eq_ne TK_OC_EQ expr_comparisons        {$$ = ast_new_node("==", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: EQUAL     */
-| expr_eq_ne TK_OC_NE expr_comparisons        {$$ = ast_new_node("!=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 5: NOT EQUAL */
+  expr_eq_ne TK_OC_EQ expr_comparisons                  ///////////* 5: EQUAL *///////////  
+  {
+    $$ = ast_new_node("==", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_EQ = new_3_operand_instruction("cmp_EQ", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_EQ);
+  }  
+| expr_eq_ne TK_OC_NE expr_comparisons                  ///////////* 5: NOT EQUAL *///////////
+  {
+    $$ = ast_new_node("!=", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_NE = new_3_operand_instruction("cmp_NE", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_NE);
+  }  
 | expr_comparisons                            {$$ = $1;}
 ;
 
-expr_comparisons:
-  expr_comparisons TK_OC_GE expr_plus_minus   {$$ = ast_new_node(">=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: GREATER OR EQUAL */
-| expr_comparisons TK_OC_LE expr_plus_minus   {$$ = ast_new_node("<=", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}  /* 4: LESS OR EQUAL    */
-| expr_comparisons '>' expr_plus_minus        {$$ = ast_new_node(">", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: GREATER          */
-| expr_comparisons '<' expr_plus_minus        {$$ = ast_new_node("<", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 4: LESS             */
+expr_comparisons: 
+  expr_comparisons TK_OC_GE expr_plus_minus             ///////////* 4: GREATER OR EQUAL *///////////
+  {
+    $$ = ast_new_node(">=", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_GE = new_3_operand_instruction("cmp_GE", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_GE);
+  } 
+| expr_comparisons TK_OC_LE expr_plus_minus             ///////////* 4: LESS OR EQUAL *///////////
+  {
+    $$ = ast_new_node("<=", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_LE = new_3_operand_instruction("cmp_LE", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_LE);
+  }  
+| expr_comparisons '>' expr_plus_minus                  ///////////* 4: GREATER *///////////
+  {
+    $$ = ast_new_node(">", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_GT = new_3_operand_instruction("cmp_GT", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_GT);
+  }   
+| expr_comparisons '<' expr_plus_minus                  ///////////* 4: LESS *///////////
+  {
+    $$ = ast_new_node("<", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
+
+    $$->temp = generate_register();
+    $$->code = $1->code;
+
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t cmp_LT = new_3_operand_instruction("cmp_LT", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, cmp_LT);
+  }   
 | expr_plus_minus                             {$$ = $1;}
 ;
 
 expr_plus_minus:
   expr_plus_minus '+' expr_times_div_mod                ///////////* 3  PLUS *///////////
-{
-  $$ = ast_new_node("+", infer_type($1->type, $3->type));
-  ast_add_child($$, $1);
-  ast_add_child($$, $3);
+  {
+    $$ = ast_new_node("+", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
 
-  $$->temp = generate_register();
-  $$->code = $1->code;
+    $$->temp = generate_register();
+    $$->code = $1->code;
 
-  concat_programs($$->code, $3->code);
-  iloc_instruction_t add = new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp);
-  push_instruction($$->code, add);
-}   
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t add = new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, add);
+  }   
 | expr_plus_minus '-' expr_times_div_mod                ///////////* 3  MINUS *///////////
-{
-  $$ = ast_new_node("-", infer_type($1->type, $3->type));
-  ast_add_child($$, $1);
-  ast_add_child($$, $3);
+  {
+    $$ = ast_new_node("-", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
 
-  $$->temp = generate_register();
-  $$->code = $1->code;
+    $$->temp = generate_register();
+    $$->code = $1->code;
 
-  concat_programs($$->code, $3->code);
-  iloc_instruction_t sub = new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp);
-  push_instruction($$->code, sub);
-}   
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t sub = new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, sub);
+  }   
 | expr_times_div_mod                          {$$ = $1;}
 ;
 
 expr_times_div_mod:
   expr_times_div_mod '*' expr_unary                     ///////////* 2: MULTIPLICATION *///////////
-{
-  $$ = ast_new_node("*", infer_type($1->type, $3->type));
-  ast_add_child($$, $1);
-  ast_add_child($$, $3);
+  {
+    $$ = ast_new_node("*", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
 
-  $$->temp = generate_register();
-  $$->code = $1->code;
+    $$->temp = generate_register();
+    $$->code = $1->code;
 
-  concat_programs($$->code, $3->code);
-  iloc_instruction_t mult = new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp);
-  push_instruction($$->code, mult);
-}
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t mult = new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, mult);
+  }
 | expr_times_div_mod '/' expr_unary                     ///////////* 2: DIVISION *///////////
-{
-  $$ = ast_new_node("/", infer_type($1->type, $3->type));
-  ast_add_child($$, $1);
-  ast_add_child($$, $3);
+  {
+    $$ = ast_new_node("/", infer_type($1->type, $3->type));
+    ast_add_child($$, $1);
+    ast_add_child($$, $3);
 
-  $$->temp = generate_register();
-  $$->code = $1->code;
+    $$->temp = generate_register();
+    $$->code = $1->code;
 
-  concat_programs($$->code, $3->code);
-  iloc_instruction_t div = new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp);
-  push_instruction($$->code, div);
-}   
+    concat_programs($$->code, $3->code);
+    iloc_instruction_t div = new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp);
+    push_instruction($$->code, div);
+  }   
 | expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
 ;
 
 expr_unary: 
   '-' expr_unary                                        ///////////* 1: UNARY MINUS *///////////
-{
-  $$ = ast_new_node("-", $2->type); ast_add_child($$, $2);
+  {
+    $$ = ast_new_node("-", $2->type); ast_add_child($$, $2);
 
-  $$->temp = generate_register();
-  $$->code = $2->code;
+    $$->temp = generate_register();
+    $$->code = $2->code;
 
-  iloc_instruction_t multI = new_3_operand_instruction("multI", $2->temp, "-1", $$->temp);
-  push_instruction($$->code, multI);
-}   
+    iloc_instruction_t multI = new_3_operand_instruction("multI", $2->temp, "-1", $$->temp);
+    push_instruction($$->code, multI);
+  }   
 | '!' expr_unary                                        ///////////* 1: NEGATE      *////////////
-{
-  $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
+  {
+    $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
 
-  $$->temp = generate_register();
-  $$->code = $2->code;
+    $$->temp = generate_register();
+    $$->code = $2->code;
 
-  char* temp_for_const_zero = generate_register();
-  iloc_instruction_t loadi = new_2_operand_instruction("loadI", 0, temp_for_const_zero);
-  iloc_instruction_t cmp_eq = new_3_operand_instruction("cmp_EQ", $2->temp, temp_for_const_zero, $$->temp);
-  push_instruction($$->code, loadi);
-  push_instruction($$->code, cmp_eq);
+    char* temp_for_const_zero = generate_register();
+    iloc_instruction_t loadi = new_2_operand_instruction("loadI", 0, temp_for_const_zero);
+    iloc_instruction_t cmp_eq = new_3_operand_instruction("cmp_EQ", $2->temp, temp_for_const_zero, $$->temp);
+    push_instruction($$->code, loadi);
+    push_instruction($$->code, cmp_eq);
 
-  free(temp_for_const_zero);
-}   
+    free(temp_for_const_zero);
+  }   
 | expr_parentheses                            {$$ = $1;}
 ;
 
@@ -439,15 +535,15 @@ operands:
 | TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1, BOOL);}
 | TK_LIT_FALSE                                {$$ = ast_new_lexeme_node($1, BOOL);}
 | TK_LIT_INT                                  
-{
-  $$ = ast_new_lexeme_node($1, INT);
-  
-  $$->temp = generate_register();
-  $$->code = new_program();
+  {
+    $$ = ast_new_lexeme_node($1, INT);
+    
+    $$->temp = generate_register();
+    $$->code = new_program();
 
-  iloc_instruction_t loadi = new_2_operand_instruction("loadI", $1->lexeme, $$->temp);
-  push_instruction($$->code, loadi);
-}
+    iloc_instruction_t loadi = new_2_operand_instruction("loadI", $1->lexeme, $$->temp);
+    push_instruction($$->code, loadi);
+  }
 | TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1, FLOAT);}
 | function_call                               {$$ = $1;}
 ;
