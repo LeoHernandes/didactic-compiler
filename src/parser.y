@@ -317,20 +317,68 @@ expr_comparisons:
 ;
 
 expr_plus_minus:
-  expr_plus_minus '+' expr_times_div_mod      {$$ = ast_new_node("+", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3  PLUS */
-| expr_plus_minus '-' expr_times_div_mod      {$$ = ast_new_node("-", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 3: PLUS */
+  expr_plus_minus '+' expr_times_div_mod                ///////////* 3  PLUS *///////////
+{
+  $$ = ast_new_node("+", infer_type($1->type, $3->type));
+  ast_add_child($$, $1);
+  ast_add_child($$, $3);
+
+  $$->temp = generate_register();
+  $$->code = $1->code;
+
+  concat_programs($$->code, $3->code);
+  iloc_instruction_t add = new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp);
+  push_instruction($$->code, add);
+}   
+| expr_plus_minus '-' expr_times_div_mod                ///////////* 3  MINUS *///////////
+{
+  $$ = ast_new_node("-", infer_type($1->type, $3->type));
+  ast_add_child($$, $1);
+  ast_add_child($$, $3);
+
+  $$->temp = generate_register();
+  $$->code = $1->code;
+
+  concat_programs($$->code, $3->code);
+  iloc_instruction_t sub = new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp);
+  push_instruction($$->code, sub);
+}   
 | expr_times_div_mod                          {$$ = $1;}
 ;
 
 expr_times_div_mod:
-  expr_times_div_mod '*' expr_unary           {$$ = ast_new_node("*", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MULTIPLICATION */
-| expr_times_div_mod '/' expr_unary           {$$ = ast_new_node("/", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: DIVISION */
+  expr_times_div_mod '*' expr_unary                     ///////////* 2: MULTIPLICATION *///////////
+{
+  $$ = ast_new_node("*", infer_type($1->type, $3->type));
+  ast_add_child($$, $1);
+  ast_add_child($$, $3);
+
+  $$->temp = generate_register();
+  $$->code = $1->code;
+
+  concat_programs($$->code, $3->code);
+  iloc_instruction_t mult = new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp);
+  push_instruction($$->code, mult);
+}
+| expr_times_div_mod '/' expr_unary                     ///////////* 2: DIVISION *///////////
+{
+  $$ = ast_new_node("/", infer_type($1->type, $3->type));
+  ast_add_child($$, $1);
+  ast_add_child($$, $3);
+
+  $$->temp = generate_register();
+  $$->code = $1->code;
+
+  concat_programs($$->code, $3->code);
+  iloc_instruction_t div = new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp);
+  push_instruction($$->code, div);
+}   
 | expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
 ;
 
 expr_unary: 
-  '-' expr_unary                                              /* 1: UNARY MINUS */
+  '-' expr_unary                                        ///////////* 1: UNARY MINUS *///////////
 {
   $$ = ast_new_node("-", $2->type); ast_add_child($$, $2);
 
@@ -340,7 +388,7 @@ expr_unary:
   iloc_instruction_t multI = new_3_operand_instruction("multI", $2->temp, "-1", $$->temp);
   push_instruction($$->code, multI);
 }   
-| '!' expr_unary                                              /* 1: NEGATE      */
+| '!' expr_unary                                        ///////////* 1: NEGATE      *////////////
 {
   $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
 
@@ -359,7 +407,7 @@ expr_unary:
 ;
 
 expr_parentheses: 
-  '(' expression ')'                          {$$ = $2;}  /* 0: PARENTHESES */
+  '(' expression ')'                          {$$ = $2;}  ///////////* 0: PARENTHESES *///////////
 | operands                                    {$$ = $1;}
 ;
 
