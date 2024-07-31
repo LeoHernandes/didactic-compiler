@@ -284,7 +284,34 @@ else_command:
 
 /* ======================= Commands: while */
 while_command:
-  TK_PR_WHILE '(' expression ')' command_block      {$$ = ast_new_node("while", BOOL); ast_add_child($$, $3); ast_add_child($$, $5);}
+  TK_PR_WHILE '(' expression ')' command_block
+  {
+    $$ = ast_new_node("while", BOOL);
+    ast_add_child($$, $3);
+    ast_add_child($$, $5);
+
+    char* init_while = generate_label();
+    char* true_branch = generate_label();
+    char* false_branch = generate_label();
+ 
+    /* 
+      init_while: nop
+      $3->code
+      cbr $3->temp true_branch false_branch
+      true_branch: nop
+      $5->code
+      jump init_while
+      false_label: nop
+    */
+    $$->code = new_program();
+    push_instruction($$->code, new_label_instruction(init_while));
+    concat_programs($$->code, $3->code);
+    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));
+    push_instruction($$->code, new_label_instruction(true_branch));
+    concat_programs($$->code, $5->code);
+    push_instruction($$->code, new_1_operand_instruction("jump", init_while));
+    push_instruction($$->code, new_label_instruction(false_branch));
+  }
 ;
 
 /* ======================= Expressions ======================= */

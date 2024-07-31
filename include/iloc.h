@@ -9,12 +9,14 @@
 
 typedef struct iloc_instruction
 {
+    char *label;
     char *op_code;
     char *operand_1;
     char *operand_2;
     char *operand_3;
 } iloc_instruction_t;
 
+iloc_instruction_t new_label_instruction(char *label);
 iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest);
 iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *dest);
 iloc_instruction_t new_3_operand_instruction(char *op_code, char *operand_1, char *operand_2, char *dest);

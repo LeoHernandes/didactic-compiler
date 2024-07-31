@@ -5,6 +5,7 @@
 iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest)
 {
     iloc_instruction_t instruction = {
+        .label = NULL,
         .op_code = op_code,
         .operand_1 = NULL,
         .operand_2 = NULL,
@@ -16,6 +17,7 @@ iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest)
 iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *dest)
 {
     iloc_instruction_t instruction = {
+        .label = NULL,
         .op_code = op_code,
         .operand_1 = src,
         .operand_2 = NULL,
@@ -27,10 +29,23 @@ iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *des
 iloc_instruction_t new_3_operand_instruction(char *op_code, char *operand_1, char *operand_2, char *dest)
 {
     iloc_instruction_t instruction = {
+        .label = NULL,
         .op_code = op_code,
         .operand_1 = operand_1,
         .operand_2 = operand_2,
         .operand_3 = dest};
+
+    return instruction;
+}
+
+iloc_instruction_t new_label_instruction(char *label)
+{
+    iloc_instruction_t instruction = {
+        .label = label,
+        .op_code = "nop",
+        .operand_1 = NULL,
+        .operand_2 = NULL,
+        .operand_3 = NULL};
 
     return instruction;
 }
