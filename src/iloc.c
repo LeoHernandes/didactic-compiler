@@ -106,8 +106,30 @@ void print_program(iloc_program_t *program)
     }
 }
 
+char *_get_arrow_by_op_code(char *op_code)
+{
+    if (strcmp(op_code, "cbr") == 0 ||
+        strcmp(op_code, "jump") == 0 ||
+        strcmp(op_code, "cmp_LT") == 0 ||
+        strcmp(op_code, "cmp_LE") == 0 ||
+        strcmp(op_code, "cmp_EQ") == 0 ||
+        strcmp(op_code, "cmp_GE") == 0 ||
+        strcmp(op_code, "cmp_GT") == 0 ||
+        strcmp(op_code, "cmp_NE") == 0)
+
+    {
+        return "->";
+    }
+    else
+    {
+        return "=>";
+    }
+}
+
 void print_instruction(iloc_instruction_t instruction)
 {
+    char *arrow = _get_arrow_by_op_code(instruction.op_code);
+
     if (instruction.label != NULL)
     {
         printf("%s:", instruction.label);
@@ -115,43 +137,20 @@ void print_instruction(iloc_instruction_t instruction)
 
     printf(" %s", instruction.op_code);
 
-    if (instruction.operand_1 != NULL)
+    if (strcmp(instruction.op_code, "storeAI") == 0 ||
+        strcmp(instruction.op_code, "cbr") == 0)
     {
-        printf(" %s", instruction.operand_1);
+        printf(" %s %s %s, %s\n", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
     }
+    else
+    {
+        if (instruction.operand_1 != NULL)
+            printf(" %s", instruction.operand_1);
 
-    if (strcmp(instruction.op_code, "storeAI") == 0)
-    {
-        printf(" =>");
-    }
-    if (strcmp(instruction.op_code, "cbr") == 0)
-    {
-        printf(" ->");
-    }
+        if (instruction.operand_2 != NULL)
+            printf(", %s", instruction.operand_2);
 
-    if (instruction.operand_2 != NULL)
-    {
-        printf(" %s", instruction.operand_2);
-    }
-
-    if (strcmp(instruction.op_code, "jump") == 0 ||
-        strcmp(instruction.op_code, "cmp_LT") == 0 ||
-        strcmp(instruction.op_code, "cmp_LE") == 0 ||
-        strcmp(instruction.op_code, "cmp_EQ") == 0 ||
-        strcmp(instruction.op_code, "cmp_GE") == 0 ||
-        strcmp(instruction.op_code, "cmp_GT") == 0 ||
-        strcmp(instruction.op_code, "cmp_NE") == 0)
-    {
-        printf(" ->");
-    }
-    else if (strcmp(instruction.op_code, "storeAI") != 0)
-    {
-        printf(" =>");
-    }
-
-    if (instruction.operand_3 != NULL)
-    {
-        printf(" %s\n", instruction.operand_3);
+        printf(" %s %s\n", arrow, instruction.operand_3);
     }
 }
 
