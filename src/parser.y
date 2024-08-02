@@ -93,11 +93,32 @@ elements_list: element elements_list
     {
       $$ = $1;
       ast_add_child($$, $2);
+
+      /*
+      match ($1->code, $2->code)
+      {
+        (null,     null     ) -> não faz nada (comando $$=$1 já resolve)
+        (not null, null     ) -> não faz nada (comando $$=$1 já resolve)
+        (null,     not null ) -> $$->code = $2->code
+        (not null, not null ) -> concat_programs($$->code, $2->code)
+      }
+      */
+      if($2->code != NULL)
+      {
+        if($1->code != NULL)
+        {
+          concat_programs($$->code, $2->code);
+        }
+        else
+        {
+          $$->code = $2->code;
+        }
+      }
     }
     else
     {
-      // if this element is a NULL node, consider the next
-      // eg. variable declaration element
+      // if this command is a NULL node, consider the next
+      // eg. variable declaration command
       $$ = $2; 
     }
 }
@@ -132,7 +153,12 @@ variables_list:
 
 /* ======================= Function declaration ======================= */
 function_declaration:
-  CREATE_SCOPE function_header function_body REMOVE_SCOPE       {$$ = $2; ast_add_child($$, $3);}
+  CREATE_SCOPE function_header function_body REMOVE_SCOPE       
+  {
+    $$ = $2; 
+    ast_add_child($$, $3);
+    $$->code = $3->code;
+  }
 ;
 
 function_header:
@@ -186,6 +212,27 @@ commands_list: command commands_list
     {
       $$ = $1;
       ast_add_child($$, $2);
+
+      /*
+      match ($1->code, $2->code)
+      {
+        (null,     null     ) -> não faz nada (comando $$=$1 já resolve)
+        (not null, null     ) -> não faz nada (comando $$=$1 já resolve)
+        (null,     not null ) -> $$->code = $2->code
+        (not null, not null ) -> concat_programs($$->code, $2->code)
+      }
+      */
+      if($2->code != NULL)
+      {
+        if($1->code != NULL)
+        {
+          concat_programs($$->code, $2->code);
+        }
+        else
+        {
+          $$->code = $2->code;
+        }
+      }
     }
     else
     {
