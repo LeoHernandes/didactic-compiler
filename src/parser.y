@@ -66,8 +66,6 @@ extern table_stack_t *table_stack;
 %type<tree_node> arguments_list
 %type<tree_node> return_command
 %type<tree_node> conditional_command
-%type<tree_node> if_command
-%type<tree_node> else_command
 %type<tree_node> while_command
 %type<tree_node> expression
 %type<tree_node> expr_or
@@ -278,16 +276,41 @@ return_command:
 
 /* ======================= Commands: conditional */
 conditional_command:
-  if_command else_command                           {$$ = $1; ast_add_child($$, $2);}
-| if_command                                        {$$ = $1;}
-;
+  TK_PR_IF '(' expression ')' command_block TK_PR_ELSE command_block
+  {
+    $$ = ast_new_node("if", BOOL);
+    ast_add_child($$, $3);
+    ast_add_child($$, $5);
+    ast_add_child($$, $7);                                   
 
-if_command: 
-  TK_PR_IF '(' expression ')' command_block         {$$ = ast_new_node("if", BOOL); ast_add_child($$, $3); ast_add_child($$, $5);}
-;
+    char* true_branch = generate_label();
+    char* false_branch = generate_label();
+    char* after_else = generate_label();
 
-else_command:
-  TK_PR_ELSE command_block                          {$$ = $2;}
+    $$->code = $3->code;                                                                                // $3->code
+    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));  // cbr $3->temp true_branch false_branch     
+    push_instruction($$->code, new_label_instruction(true_branch));                                     // true_branch: nop 
+    concat_programs($$->code, $5->code);                                                                // $5->code
+    push_instruction($$->code, new_1_operand_instruction("jump", after_else));                          // jump after_else                         
+    push_instruction($$->code, new_label_instruction(false_branch));                                    // false_branch: nop
+    concat_programs($$->code, $7->code);                                                                // $7->code
+    push_instruction($$->code, new_label_instruction(after_else));                                      // after_else: nop 
+  }
+| TK_PR_IF '(' expression ')' command_block                                        
+  {
+    $$ = ast_new_node("if", BOOL);
+    ast_add_child($$, $3);
+    ast_add_child($$, $5);
+
+    char* true_branch = generate_label();
+    char* false_branch = generate_label();
+
+    $$->code = $3->code;                                                                                  // $3->code
+    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch
+    push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop
+    concat_programs($$->code, $5->code);                                                                  // $5->code
+    push_instruction($$->code, new_label_instruction(false_branch));                                      // false_branch: nop
+  }
 ;
 
 /* ======================= Commands: while */
@@ -301,24 +324,15 @@ while_command:
     char* init_while = generate_label();
     char* true_branch = generate_label();
     char* false_branch = generate_label();
- 
-    /* 
-      init_while: nop
-      $3->code
-      cbr $3->temp true_branch false_branch
-      true_branch: nop
-      $5->code
-      jump init_while
-      false_label: nop
-    */
-    $$->code = new_program();
-    push_instruction($$->code, new_label_instruction(init_while));
-    concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));
-    push_instruction($$->code, new_label_instruction(true_branch));
-    concat_programs($$->code, $5->code);
-    push_instruction($$->code, new_1_operand_instruction("jump", init_while));
-    push_instruction($$->code, new_label_instruction(false_branch));
+
+    $$->code = new_program();                                                                             
+    push_instruction($$->code, new_label_instruction(init_while));                                        // init_while: nop 
+    concat_programs($$->code, $3->code);                                                                  // $3->code 
+    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch    
+    push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop 
+    concat_programs($$->code, $5->code);                                                                  // $5->code 
+    push_instruction($$->code, new_1_operand_instruction("jump", init_while));                            // jump init_while 
+    push_instruction($$->code, new_label_instruction(false_branch));                                      // false_label: nop
   }
 ;
 
