@@ -228,6 +228,14 @@ attribution_command:
     $$ = ast_new_node("=", symbol->type);
     ast_add_child($$, ast_new_lexeme_node($1, symbol->type));
     ast_add_child($$, $3);
+
+    char* scope = table_stack_find_symbol_scope(table_stack, $1->lexeme);
+    char* offset_str = get_offset_string(symbol->offset);
+
+    $$->code = $3->code;
+
+    iloc_instruction_t storeai = new_3_operand_instruction("storeAI", $3->temp, scope, offset_str);
+    push_instruction($$->code, storeai);
   }
 ;
 
