@@ -21,6 +21,11 @@ int main(int argc, char **argv)
 
   if (ast_root != NULL) // if it isn't a empty program
   {
+    if (ast_root->code != NULL)
+    {
+      print_program(ast_root->code);
+    }
+
     ast_free(ast_root);
   }
 

@@ -98,6 +98,39 @@ void push_instruction(iloc_program_t *program, iloc_instruction_t instruction)
     program->instructions[program->length - 1] = instruction;
 }
 
+void print_program(iloc_program_t *program)
+{
+    for (int i = 0; i < program->length; i++)
+    {
+        print_instruction(program->instructions[i]);
+    }
+}
+
+void print_instruction(iloc_instruction_t instruction)
+{
+    if (instruction.label != NULL)
+    {
+        printf("%s: ", instruction.label);
+    }
+
+    printf("%s ", instruction.op_code);
+
+    if (instruction.operand_1 != NULL)
+    {
+        printf("%s ", instruction.operand_1);
+    }
+
+    if (instruction.operand_2 != NULL)
+    {
+        printf("%s ", instruction.operand_2);
+    }
+
+    if (instruction.operand_3 != NULL)
+    {
+        printf("=> %s\n", instruction.operand_3);
+    }
+}
+
 /* ================================== Auxiliar functions ================================== */
 unsigned int number_of_digits(int number)
 {

@@ -85,8 +85,8 @@ short symbol_table_add(symbol_table_t *table, symbol_t *symbol)
 
         pos = (pos + 1) % table->size;
     }
-    table->symbol_count++;
     symbol->offset = table->symbol_count * 4; // only integers
+    table->symbol_count++;
     table->symbols[pos] = symbol;
 
     if (table->symbol_count >= table->size)
