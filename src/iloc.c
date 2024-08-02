@@ -110,24 +110,48 @@ void print_instruction(iloc_instruction_t instruction)
 {
     if (instruction.label != NULL)
     {
-        printf("%s: ", instruction.label);
+        printf("%s:", instruction.label);
     }
 
-    printf("%s ", instruction.op_code);
+    printf(" %s", instruction.op_code);
 
     if (instruction.operand_1 != NULL)
     {
-        printf("%s ", instruction.operand_1);
+        printf(" %s", instruction.operand_1);
+    }
+
+    if (strcmp(instruction.op_code, "storeAI") == 0)
+    {
+        printf(" =>");
+    }
+    if (strcmp(instruction.op_code, "cbr") == 0)
+    {
+        printf(" ->");
     }
 
     if (instruction.operand_2 != NULL)
     {
-        printf("%s ", instruction.operand_2);
+        printf(" %s", instruction.operand_2);
+    }
+
+    if (strcmp(instruction.op_code, "jump") == 0 ||
+        strcmp(instruction.op_code, "cmp_LT") == 0 ||
+        strcmp(instruction.op_code, "cmp_LE") == 0 ||
+        strcmp(instruction.op_code, "cmp_EQ") == 0 ||
+        strcmp(instruction.op_code, "cmp_GE") == 0 ||
+        strcmp(instruction.op_code, "cmp_GT") == 0 ||
+        strcmp(instruction.op_code, "cmp_NE") == 0)
+    {
+        printf(" ->");
+    }
+    else if (strcmp(instruction.op_code, "storeAI") != 0)
+    {
+        printf(" =>");
     }
 
     if (instruction.operand_3 != NULL)
     {
-        printf("=> %s\n", instruction.operand_3);
+        printf(" %s\n", instruction.operand_3);
     }
 }
 
