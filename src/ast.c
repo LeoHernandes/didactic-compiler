@@ -98,13 +98,18 @@ void ast_free(ast_t *tree)
         free(tree->children);
         free(tree->label);
         free(tree->value);
-        free(tree);
 
         if (tree->temp != NULL)
+        {
             free(tree->temp);
+        }
 
         if (tree->code != NULL)
+        {
             free(tree->code);
+        }
+
+        free(tree);
     }
 }
 

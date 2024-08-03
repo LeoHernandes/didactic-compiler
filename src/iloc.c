@@ -175,7 +175,8 @@ char *generate_label()
 {
     static unsigned int label_number = 0;
 
-    unsigned int buffer_size = number_of_digits(label_number) + 1;
+    // Buffer must store 'L[digits]\0'
+    unsigned int buffer_size = number_of_digits(label_number) + 1 + 1;
     char *buffer = malloc(sizeof(char) * buffer_size);
 
     if (buffer == NULL)
@@ -194,7 +195,8 @@ char *generate_register()
 {
     static unsigned int register_number = 0;
 
-    unsigned int buffer_size = number_of_digits(register_number) + 1;
+    // Buffer must store 'r[digits]\0'
+    unsigned int buffer_size = number_of_digits(register_number) + 1 + 1;
     char *buffer = malloc(sizeof(char) * buffer_size);
 
     if (buffer == NULL)
@@ -211,7 +213,7 @@ char *generate_register()
 
 char *get_offset_string(unsigned int offset)
 {
-    unsigned int buffer_size = number_of_digits(offset);
+    unsigned int buffer_size = number_of_digits(offset) + 1;
     char *buffer = malloc(sizeof(char) * buffer_size);
 
     if (buffer == NULL)
