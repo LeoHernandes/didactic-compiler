@@ -338,7 +338,7 @@ conditional_command:
     push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));  // cbr $3->temp true_branch false_branch     
     push_instruction($$->code, new_label_instruction(true_branch));                                     // true_branch: nop 
     concat_programs($$->code, $5->code);                                                                // $5->code
-    push_instruction($$->code, new_1_operand_instruction("jump", after_else));                          // jump after_else                         
+    push_instruction($$->code, new_1_operand_instruction("jumpI", after_else));                          // jump after_else                         
     push_instruction($$->code, new_label_instruction(false_branch));                                    // false_branch: nop
     concat_programs($$->code, $7->code);                                                                // $7->code
     push_instruction($$->code, new_label_instruction(after_else));                                      // after_else: nop 
@@ -378,7 +378,7 @@ while_command:
     push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch    
     push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop 
     concat_programs($$->code, $5->code);                                                                  // $5->code 
-    push_instruction($$->code, new_1_operand_instruction("jump", init_while));                            // jump init_while 
+    push_instruction($$->code, new_1_operand_instruction("jumpI", init_while));                            // jump init_while 
     push_instruction($$->code, new_label_instruction(false_branch));                                      // false_label: nop
   }
 ;
