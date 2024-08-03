@@ -2,45 +2,45 @@
 
 lexical_data_t *lexical_data_new(int line_number, lexical_value_token_t token, char *lexeme)
 {
-    lexical_data_t *data = NULL;
-    data = malloc(sizeof(lexical_data_t));
-
-    if (data != NULL)
+    lexical_data_t *data = malloc(sizeof(lexical_data_t));
+    if (data == NULL)
     {
-        data->line_number = line_number;
-        data->token = token;
-        data->lexeme = lexeme;
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
     }
+
+    data->line_number = line_number;
+    data->token = token;
+    data->lexeme = lexeme;
 
     return data;
 }
 
 ast_t *ast_new_node(const char *label, data_type_t type)
 {
-    ast_t *node = NULL;
-    node = malloc(sizeof(ast_t));
-
-    if (node != NULL)
+    ast_t *node = malloc(sizeof(ast_t));
+    if (node == NULL)
     {
-        node->label = strdup(label);
-
-        node->value = NULL;
-        node->children = NULL;
-        node->number_of_children = 0;
-        node->type = type;
-
-        node->temp = NULL;
-        node->code = NULL;
+        printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
+        return NULL;
     }
+
+    node->label = strdup(label);
+
+    node->value = NULL;
+    node->children = NULL;
+    node->number_of_children = 0;
+    node->type = type;
+
+    node->temp = NULL;
+    node->code = NULL;
 
     return node;
 }
 
 ast_t *ast_new_lexeme_node(lexical_data_t *lex_data, data_type_t type)
 {
-    ast_t *node = NULL;
-    node = malloc(sizeof(ast_t));
-
+    ast_t *node = malloc(sizeof(ast_t));
     if (node == NULL)
     {
         printf("ERROR: %s couldn't allocate memory\n", __FUNCTION__);
@@ -62,8 +62,7 @@ ast_t *ast_new_lexeme_node(lexical_data_t *lex_data, data_type_t type)
 
 ast_t *ast_new_lexeme_node_prefix_label(lexical_data_t *lex_data, const char *label, data_type_t type)
 {
-    ast_t *node = NULL;
-    node = malloc(sizeof(ast_t));
+    ast_t *node = malloc(sizeof(ast_t));
 
     if (node == NULL)
     {
@@ -91,13 +90,20 @@ void ast_free(ast_t *tree)
 {
     if (tree != NULL)
     {
-        for (int i = 0; i < tree->number_of_children; i++)
+        if (tree->number_of_children > 0)
         {
-            ast_free(tree->children[i]);
+            for (int i = 0; i < tree->number_of_children; i++)
+            {
+                ast_free(tree->children[i]);
+            }
+            free(tree->children);
         }
-        free(tree->children);
+
         free(tree->label);
-        free(tree->value);
+        if (tree->value != NULL)
+        {
+            free(tree->value);
+        }
 
         if (tree->temp != NULL)
         {
