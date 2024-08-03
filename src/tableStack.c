@@ -104,11 +104,20 @@ symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme)
 
 char *table_stack_find_symbol_scope(table_stack_t *stack, char *lexeme)
 {
+    _node_stack_t *current_stack_node = stack->top;
     symbol_t *symbol = NULL;
-    symbol = symbol_table_get_or_null(stack->top->symbol_table, lexeme);
+    while (current_stack_node->prev != NULL)
+    {
+        current_stack_node = current_stack_node->prev;
+    }
+
+    symbol = symbol_table_get_or_null(current_stack_node->symbol_table, lexeme);
     if (symbol != NULL)
+    {
+        return "rbss";
+    }
+    else
     {
         return "rfp";
     }
-    return "rbss";
 }
