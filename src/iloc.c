@@ -103,6 +103,7 @@ void print_program(iloc_program_t *program)
     for (int i = 0; i < program->length; i++)
     {
         print_instruction(program->instructions[i]);
+        printf("\n");
     }
 }
 
@@ -137,10 +138,13 @@ void print_instruction(iloc_instruction_t instruction)
 
     printf(" %s", instruction.op_code);
 
+    if (strcmp(instruction.op_code, "nop") == 0)
+        return;
+
     if (strcmp(instruction.op_code, "storeAI") == 0 ||
         strcmp(instruction.op_code, "cbr") == 0)
     {
-        printf(" %s %s %s, %s\n", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
+        printf(" %s %s %s, %s", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
     }
     else
     {
@@ -150,7 +154,7 @@ void print_instruction(iloc_instruction_t instruction)
         if (instruction.operand_2 != NULL)
             printf(", %s", instruction.operand_2);
 
-        printf(" %s %s\n", arrow, instruction.operand_3);
+        printf(" %s %s", arrow, instruction.operand_3);
     }
 }
 
