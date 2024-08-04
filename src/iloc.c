@@ -50,6 +50,57 @@ iloc_instruction_t new_label_instruction(char *label)
     return instruction;
 }
 
+char *_get_arrow_by_op_code(char *op_code)
+{
+    if (strcmp(op_code, "cbr") == 0 ||
+        strcmp(op_code, "jump") == 0 ||
+        strcmp(op_code, "cmp_LT") == 0 ||
+        strcmp(op_code, "cmp_LE") == 0 ||
+        strcmp(op_code, "cmp_EQ") == 0 ||
+        strcmp(op_code, "cmp_GE") == 0 ||
+        strcmp(op_code, "cmp_GT") == 0 ||
+        strcmp(op_code, "cmp_NE") == 0)
+
+    {
+        return "->";
+    }
+    else
+    {
+        return "=>";
+    }
+}
+
+void print_instruction(iloc_instruction_t instruction)
+{
+    char *arrow = _get_arrow_by_op_code(instruction.op_code);
+
+    if (instruction.label != NULL)
+    {
+        printf("%s:", instruction.label);
+    }
+
+    printf(" %s", instruction.op_code);
+
+    if (strcmp(instruction.op_code, "nop") == 0)
+        return;
+
+    if (strcmp(instruction.op_code, "storeAI") == 0 ||
+        strcmp(instruction.op_code, "cbr") == 0)
+    {
+        printf(" %s %s %s, %s", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
+    }
+    else
+    {
+        if (instruction.operand_1 != NULL)
+            printf(" %s", instruction.operand_1);
+
+        if (instruction.operand_2 != NULL)
+            printf(", %s", instruction.operand_2);
+
+        printf(" %s %s", arrow, instruction.operand_3);
+    }
+}
+
 /* ================================== Vector of ILOC operations (program) ================================== */
 
 iloc_program_t *new_program()
@@ -107,54 +158,13 @@ void print_program(iloc_program_t *program)
     }
 }
 
-char *_get_arrow_by_op_code(char *op_code)
+void free_program_labels(iloc_program_t *program)
 {
-    if (strcmp(op_code, "cbr") == 0 ||
-        strcmp(op_code, "jump") == 0 ||
-        strcmp(op_code, "cmp_LT") == 0 ||
-        strcmp(op_code, "cmp_LE") == 0 ||
-        strcmp(op_code, "cmp_EQ") == 0 ||
-        strcmp(op_code, "cmp_GE") == 0 ||
-        strcmp(op_code, "cmp_GT") == 0 ||
-        strcmp(op_code, "cmp_NE") == 0)
-
+    for (int i = 0; i < program->length; i++)
     {
-        return "->";
-    }
-    else
-    {
-        return "=>";
-    }
-}
-
-void print_instruction(iloc_instruction_t instruction)
-{
-    char *arrow = _get_arrow_by_op_code(instruction.op_code);
-
-    if (instruction.label != NULL)
-    {
-        printf("%s:", instruction.label);
-    }
-
-    printf(" %s", instruction.op_code);
-
-    if (strcmp(instruction.op_code, "nop") == 0)
-        return;
-
-    if (strcmp(instruction.op_code, "storeAI") == 0 ||
-        strcmp(instruction.op_code, "cbr") == 0)
-    {
-        printf(" %s %s %s, %s", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
-    }
-    else
-    {
-        if (instruction.operand_1 != NULL)
-            printf(" %s", instruction.operand_1);
-
-        if (instruction.operand_2 != NULL)
-            printf(", %s", instruction.operand_2);
-
-        printf(" %s %s", arrow, instruction.operand_3);
+        char *label = program->instructions[i].label;
+        if (label != NULL)
+            free(label);
     }
 }
 

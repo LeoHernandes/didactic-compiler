@@ -34,6 +34,7 @@ iloc_program_t *new_program();
 void concat_programs(iloc_program_t *dest, iloc_program_t *src);
 void push_instruction(iloc_program_t *program, iloc_instruction_t instruction);
 void print_program(iloc_program_t *program);
+void free_program_labels(iloc_program_t *program);
 
 /* ================================== Auxiliar functions ================================== */
 

@@ -24,8 +24,8 @@ int main(int argc, char **argv)
     if (ast_root->code != NULL)
     {
       print_program(ast_root->code);
+      free_program_labels(ast_root->code);
     }
-
     ast_free(ast_root);
   }
 
