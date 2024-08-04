@@ -112,6 +112,10 @@ void ast_free(ast_t *tree)
 
         if (tree->code != NULL)
         {
+            if (tree->code->instructions != NULL)
+            {
+                free(tree->code->instructions);
+            }
             free(tree->code);
         }
 

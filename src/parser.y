@@ -111,7 +111,8 @@ elements_list: element elements_list
         }
         else
         {
-          $$->code = $2->code;
+          $$->code = new_program();                                                                             
+          concat_programs($$->code, $2->code);
         }
       }
     }
@@ -157,7 +158,9 @@ function_declaration:
   {
     $$ = $2; 
     ast_add_child($$, $3);
-    $$->code = $3->code;
+
+    $$->code = new_program();
+    concat_programs($$->code, $3->code);
   }
 ;
 
@@ -230,7 +233,8 @@ commands_list: command commands_list
         }
         else
         {
-          $$->code = $2->code;
+          $$->code = new_program();                                                                             
+          concat_programs($$->code, $2->code);
         }
       }
     }
@@ -277,10 +281,9 @@ attribution_command:
     char* scope = table_stack_find_symbol_scope(table_stack, $1->lexeme);
     char* offset_str = get_offset_string(symbol->offset);
 
-    $$->code = $3->code;
-
-    iloc_instruction_t storeai = new_3_operand_instruction("storeAI", $3->temp, scope, offset_str);
-    push_instruction($$->code, storeai);
+    $$->code = new_program();                                                                             
+    concat_programs($$->code, $3->code);
+    push_instruction($$->code, new_3_operand_instruction("storeAI", $3->temp, scope, offset_str));
   }
 ;
 
@@ -334,7 +337,8 @@ conditional_command:
     char* false_branch = generate_label();
     char* after_else = generate_label();
 
-    $$->code = $3->code;                                                                                // $3->code
+    $$->code = new_program();                                                                             
+    concat_programs($$->code, $3->code);                                                                // $5->code
     push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));  // cbr $3->temp true_branch false_branch     
     push_instruction($$->code, new_label_instruction(true_branch));                                     // true_branch: nop 
     concat_programs($$->code, $5->code);                                                                // $5->code
@@ -352,7 +356,8 @@ conditional_command:
     char* true_branch = generate_label();
     char* false_branch = generate_label();
 
-    $$->code = $3->code;                                                                                  // $3->code
+    $$->code = new_program();                                                                             
+    concat_programs($$->code, $3->code);                                                                  // $5->code
     push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch
     push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop
     concat_programs($$->code, $5->code);                                                                  // $5->code
@@ -396,11 +401,11 @@ expr_or:
     ast_add_child($$, $3);
     
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t or = new_3_operand_instruction("or", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, or);
+    push_instruction($$->code, new_3_operand_instruction("or", $1->temp, $3->temp, $$->temp));
   }   
 | expr_and                                    {$$ = $1;}
 ;
@@ -413,11 +418,11 @@ expr_and:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t and = new_3_operand_instruction("and", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, and);
+    push_instruction($$->code, new_3_operand_instruction("and", $1->temp, $3->temp, $$->temp));
   }
 | expr_eq_ne                                  {$$ = $1;}
 ;
@@ -430,11 +435,11 @@ expr_eq_ne:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_EQ = new_3_operand_instruction("cmp_EQ", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_EQ);
+    push_instruction($$->code, new_3_operand_instruction("cmp_EQ", $1->temp, $3->temp, $$->temp));
   }  
 | expr_eq_ne TK_OC_NE expr_comparisons                  ///////////* 5: NOT EQUAL *///////////
   {
@@ -443,11 +448,11 @@ expr_eq_ne:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_NE = new_3_operand_instruction("cmp_NE", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_NE);
+    push_instruction($$->code, new_3_operand_instruction("cmp_NE", $1->temp, $3->temp, $$->temp));
   }  
 | expr_comparisons                            {$$ = $1;}
 ;
@@ -460,11 +465,11 @@ expr_comparisons:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_GE = new_3_operand_instruction("cmp_GE", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_GE);
+    push_instruction($$->code, new_3_operand_instruction("cmp_GE", $1->temp, $3->temp, $$->temp));
   } 
 | expr_comparisons TK_OC_LE expr_plus_minus             ///////////* 4: LESS OR EQUAL *///////////
   {
@@ -473,11 +478,11 @@ expr_comparisons:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_LE = new_3_operand_instruction("cmp_LE", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_LE);
+    push_instruction($$->code, new_3_operand_instruction("cmp_LE", $1->temp, $3->temp, $$->temp));
   }  
 | expr_comparisons '>' expr_plus_minus                  ///////////* 4: GREATER *///////////
   {
@@ -486,11 +491,11 @@ expr_comparisons:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_GT = new_3_operand_instruction("cmp_GT", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_GT);
+    push_instruction($$->code, new_3_operand_instruction("cmp_GT", $1->temp, $3->temp, $$->temp));
   }   
 | expr_comparisons '<' expr_plus_minus                  ///////////* 4: LESS *///////////
   {
@@ -499,11 +504,11 @@ expr_comparisons:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t cmp_LT = new_3_operand_instruction("cmp_LT", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, cmp_LT);
+    push_instruction($$->code, new_3_operand_instruction("cmp_LT", $1->temp, $3->temp, $$->temp));
   }   
 | expr_plus_minus                             {$$ = $1;}
 ;
@@ -516,11 +521,11 @@ expr_plus_minus:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t add = new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, add);
+    push_instruction($$->code, new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp));
   }   
 | expr_plus_minus '-' expr_times_div_mod                ///////////* 3  MINUS *///////////
   {
@@ -529,11 +534,11 @@ expr_plus_minus:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t sub = new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, sub);
+    push_instruction($$->code, new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp));
   }   
 | expr_times_div_mod                          {$$ = $1;}
 ;
@@ -546,11 +551,11 @@ expr_times_div_mod:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t mult = new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, mult);
+    push_instruction($$->code, new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp));
   }
 | expr_times_div_mod '/' expr_unary                     ///////////* 2: DIVISION *///////////
   {
@@ -559,11 +564,11 @@ expr_times_div_mod:
     ast_add_child($$, $3);
 
     $$->temp = generate_register();
-    $$->code = $1->code;
+    $$->code = new_program();
 
+    concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    iloc_instruction_t div = new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp);
-    push_instruction($$->code, div);
+    push_instruction($$->code, new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp));
   }   
 | expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
@@ -575,22 +580,21 @@ expr_unary:
     $$ = ast_new_node("-", $2->type); ast_add_child($$, $2);
 
     $$->temp = generate_register();
-    $$->code = $2->code;
+    $$->code = new_program();
 
-    iloc_instruction_t multI = new_3_operand_instruction("multI", $2->temp, "-1", $$->temp);
-    push_instruction($$->code, multI);
+    concat_programs($$->code, $2->code);
+    push_instruction($$->code, new_3_operand_instruction("multI", $2->temp, "-1", $$->temp));
   }   
 | '!' expr_unary                                        ///////////* 1: NEGATE      *////////////
   {
     $$ = ast_new_node("!", $2->type); ast_add_child($$, $2);
 
     $$->temp = generate_register();
-    $$->code = $2->code;
+    $$->code = new_program();
 
-    iloc_instruction_t loadi = new_2_operand_instruction("loadI", "0", $$->temp);
-    iloc_instruction_t cmp_eq = new_3_operand_instruction("cmp_EQ", $2->temp, $$->temp, $$->temp);
-    push_instruction($$->code, loadi);
-    push_instruction($$->code, cmp_eq);
+    concat_programs($$->code, $2->code);
+    push_instruction($$->code, new_2_operand_instruction("loadI", "0", $$->temp));
+    push_instruction($$->code, new_3_operand_instruction("cmp_EQ", $2->temp, $$->temp, $$->temp));
   }   
 | expr_parentheses                            {$$ = $1;}
 ;
