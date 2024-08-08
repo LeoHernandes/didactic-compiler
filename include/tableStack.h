@@ -39,5 +39,8 @@ _node_stack_t *_node_stack_new(symbol_table_t *table);
  */
 symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme);
 
+symbol_table_t *table_stack_peek_bottom(table_stack_t *stack);
+
 char *table_stack_find_symbol_scope(table_stack_t *stack, char *lexeme);
+
 #endif

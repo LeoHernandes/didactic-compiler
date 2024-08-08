@@ -102,16 +102,22 @@ symbol_t *table_stack_find_symbol_or_null(table_stack_t *stack, char *lexeme)
     return NULL;
 }
 
-char *table_stack_find_symbol_scope(table_stack_t *stack, char *lexeme)
+symbol_table_t *table_stack_peek_bottom(table_stack_t *stack)
 {
     _node_stack_t *current_stack_node = stack->top;
-    symbol_t *symbol = NULL;
     while (current_stack_node->prev != NULL)
     {
         current_stack_node = current_stack_node->prev;
     }
+    return current_stack_node->symbol_table;
+}
 
-    symbol = symbol_table_get_or_null(current_stack_node->symbol_table, lexeme);
+char *table_stack_find_symbol_scope(table_stack_t *stack, char *lexeme)
+{
+    symbol_t *symbol = NULL;
+    symbol_table_t *bottom_stack_table = table_stack_peek_bottom(stack);
+    symbol = symbol_table_get_or_null(bottom_stack_table, lexeme);
+
     if (symbol != NULL)
     {
         return "rbss";
