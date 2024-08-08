@@ -8,14 +8,14 @@ CDIR=src
 
 # Project's configurable macros ===============================
 # WARNING! Change this at every deploy
-PROJECT = etapa5
+PROJECT = etapa6
 
 # You MUST list all header files here
-_DEPS = parser.tab.h ast.h dataType.h symbolTable.h tableStack.h semanticErrors.h iloc.h
+_DEPS = parser.tab.h ast.h dataType.h symbolTable.h tableStack.h semanticErrors.h iloc.h asm.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # You MUST list all object files here
-_OBJ = main.o lex.yy.o parser.tab.o ast.o dataType.o symbolTable.o tableStack.o semanticErrors.o iloc.o
+_OBJ = main.o lex.yy.o parser.tab.o ast.o dataType.o symbolTable.o tableStack.o semanticErrors.o iloc.o asm.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Default command =============================================
