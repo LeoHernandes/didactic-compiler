@@ -83,7 +83,7 @@ extern table_stack_t *table_stack;
 
 /* ======================= Program generic structure ======================= */
 program: 
-  CREATE_SCOPE elements_list REMOVE_SCOPE           {ast_root = $2;}
+  CREATE_SCOPE elements_list                        {ast_root = $2;}
 |                                                   {ast_root = NULL;}
 ;
 
