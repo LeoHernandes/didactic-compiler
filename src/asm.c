@@ -6,7 +6,8 @@ void print_main_function_info()
         "\t.long\t3\n"
         "\t.text\n"
         "\t.globl\tmain\n"
-        "\t.type\tmain, @function\n");
+        "\t.type\tmain, @function\n"
+        "main:\n");
 }
 void print_global_variable_info(char *identifier, int variable_pos)
 {
