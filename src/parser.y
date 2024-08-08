@@ -321,7 +321,13 @@ arguments_list:
 
 /* ======================= Commands: return */
 return_command: 
-  TK_PR_RETURN expression                           {$$ = ast_new_node("return", $2->type); ast_add_child($$, $2);}
+  TK_PR_RETURN expression
+  {
+    $$ = ast_new_node("return", $2->type);
+    ast_add_child($$, $2);
+    $$->code = new_program();
+    push_instruction($$->code, new_1_operand_instruction("ret", $2->temp));
+  }
 ;
 
 /* ======================= Commands: conditional */

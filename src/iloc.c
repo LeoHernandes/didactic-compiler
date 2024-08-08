@@ -153,8 +153,12 @@ void print_program(iloc_program_t *program)
 {
     for (int i = 0; i < program->length; i++)
     {
-        print_instruction(program->instructions[i]);
-        printf("\n");
+        // iloc doesn't have a return instruction
+        if (strcmp(program->instructions[i].op_code, "ret") != 0)
+        {
+            print_instruction(program->instructions[i]);
+            printf("\n");
+        }
     }
 }
 
