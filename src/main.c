@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   {
     if (ast_root->code != NULL)
     {
-      print_asm(ast_root->code);
+      print_asm(ast_root->code, table_stack);
       free_program_labels(ast_root->code);
     }
     ast_free(ast_root);
