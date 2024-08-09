@@ -66,11 +66,10 @@ void print_code_segment(iloc_program_t *program, symbol_table_t *global_table)
     for (int pos = 0; pos < program->length; pos++)
     {
         instruction = program->instructions[pos];
-        if (instruction.op_code != NULL &&
-            (strcmp(instruction.op_code, "loadAI") == 0 ||
-             strcmp(instruction.op_code, "storeAI") == 0))
+        if (instruction.op_code == LOADAI ||
+            instruction.op_code == STOREAI)
         {
-            if (strcmp(instruction.op_code, "loadAI") == 0)
+            if (instruction.op_code == LOADAI)
             {
                 scope = instruction.operand_1;
                 offset = instruction.operand_2;

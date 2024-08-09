@@ -283,7 +283,7 @@ attribution_command:
 
     $$->code = new_program();                                                                             
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("storeAI", $3->temp, scope, offset_str));
+    push_instruction($$->code, new_3_operand_instruction(STOREAI, $3->temp, scope, offset_str));
   }
 ;
 
@@ -326,7 +326,7 @@ return_command:
     $$ = ast_new_node("return", $2->type);
     ast_add_child($$, $2);
     $$->code = new_program();
-    push_instruction($$->code, new_1_operand_instruction("ret", $2->temp));
+    push_instruction($$->code, new_1_operand_instruction(RET, $2->temp));
   }
 ;
 
@@ -345,10 +345,10 @@ conditional_command:
 
     $$->code = new_program();                                                                             
     concat_programs($$->code, $3->code);                                                                // $5->code
-    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));  // cbr $3->temp true_branch false_branch     
+    push_instruction($$->code, new_3_operand_instruction(CBR, $3->temp, true_branch, false_branch));  // cbr $3->temp true_branch false_branch     
     push_instruction($$->code, new_label_instruction(true_branch));                                     // true_branch: nop 
     concat_programs($$->code, $5->code);                                                                // $5->code
-    push_instruction($$->code, new_1_operand_instruction("jumpI", after_else));                          // jump after_else                         
+    push_instruction($$->code, new_1_operand_instruction(JUMPI, after_else));                          // jump after_else                         
     push_instruction($$->code, new_label_instruction(false_branch));                                    // false_branch: nop
     concat_programs($$->code, $7->code);                                                                // $7->code
     push_instruction($$->code, new_label_instruction(after_else));                                      // after_else: nop 
@@ -364,7 +364,7 @@ conditional_command:
 
     $$->code = new_program();                                                                             
     concat_programs($$->code, $3->code);                                                                  // $5->code
-    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch
+    push_instruction($$->code, new_3_operand_instruction(CBR, $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch
     push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop
     concat_programs($$->code, $5->code);                                                                  // $5->code
     push_instruction($$->code, new_label_instruction(false_branch));                                      // false_branch: nop
@@ -386,10 +386,10 @@ while_command:
     $$->code = new_program();                                                                             
     push_instruction($$->code, new_label_instruction(init_while));                                        // init_while: nop 
     concat_programs($$->code, $3->code);                                                                  // $3->code 
-    push_instruction($$->code, new_3_operand_instruction("cbr", $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch    
+    push_instruction($$->code, new_3_operand_instruction(CBR, $3->temp, true_branch, false_branch));    // cbr $3->temp true_branch false_branch    
     push_instruction($$->code, new_label_instruction(true_branch));                                       // true_branch: nop 
     concat_programs($$->code, $5->code);                                                                  // $5->code 
-    push_instruction($$->code, new_1_operand_instruction("jumpI", init_while));                            // jump init_while 
+    push_instruction($$->code, new_1_operand_instruction(JUMPI, init_while));                            // jump init_while 
     push_instruction($$->code, new_label_instruction(false_branch));                                      // false_label: nop
   }
 ;
@@ -411,7 +411,7 @@ expr_or:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("or", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(OR, $1->temp, $3->temp, $$->temp));
   }   
 | expr_and                                    {$$ = $1;}
 ;
@@ -428,7 +428,7 @@ expr_and:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("and", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(AND, $1->temp, $3->temp, $$->temp));
   }
 | expr_eq_ne                                  {$$ = $1;}
 ;
@@ -445,7 +445,7 @@ expr_eq_ne:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_EQ", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_EQ, $1->temp, $3->temp, $$->temp));
   }  
 | expr_eq_ne TK_OC_NE expr_comparisons                  ///////////* 5: NOT EQUAL *///////////
   {
@@ -458,7 +458,7 @@ expr_eq_ne:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_NE", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_NE, $1->temp, $3->temp, $$->temp));
   }  
 | expr_comparisons                            {$$ = $1;}
 ;
@@ -475,7 +475,7 @@ expr_comparisons:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_GE", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_GE, $1->temp, $3->temp, $$->temp));
   } 
 | expr_comparisons TK_OC_LE expr_plus_minus             ///////////* 4: LESS OR EQUAL *///////////
   {
@@ -488,7 +488,7 @@ expr_comparisons:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_LE", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_LE, $1->temp, $3->temp, $$->temp));
   }  
 | expr_comparisons '>' expr_plus_minus                  ///////////* 4: GREATER *///////////
   {
@@ -501,7 +501,7 @@ expr_comparisons:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_GT", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_GT, $1->temp, $3->temp, $$->temp));
   }   
 | expr_comparisons '<' expr_plus_minus                  ///////////* 4: LESS *///////////
   {
@@ -514,7 +514,7 @@ expr_comparisons:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("cmp_LT", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_LT, $1->temp, $3->temp, $$->temp));
   }   
 | expr_plus_minus                             {$$ = $1;}
 ;
@@ -531,7 +531,7 @@ expr_plus_minus:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("add", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(ADD, $1->temp, $3->temp, $$->temp));
   }   
 | expr_plus_minus '-' expr_times_div_mod                ///////////* 3  MINUS *///////////
   {
@@ -544,7 +544,7 @@ expr_plus_minus:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("sub", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(SUB, $1->temp, $3->temp, $$->temp));
   }   
 | expr_times_div_mod                          {$$ = $1;}
 ;
@@ -561,7 +561,7 @@ expr_times_div_mod:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("mult", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(MULT, $1->temp, $3->temp, $$->temp));
   }
 | expr_times_div_mod '/' expr_unary                     ///////////* 2: DIVISION *///////////
   {
@@ -574,7 +574,7 @@ expr_times_div_mod:
 
     concat_programs($$->code, $1->code);
     concat_programs($$->code, $3->code);
-    push_instruction($$->code, new_3_operand_instruction("div", $1->temp, $3->temp, $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(DIV, $1->temp, $3->temp, $$->temp));
   }   
 | expr_times_div_mod '%' expr_unary           {$$ = ast_new_node("%", infer_type($1->type, $3->type)); ast_add_child($$, $1); ast_add_child($$, $3);}   /* 2: MODULE */
 | expr_unary                                  {$$ = $1;}
@@ -589,7 +589,7 @@ expr_unary:
     $$->code = new_program();
 
     concat_programs($$->code, $2->code);
-    push_instruction($$->code, new_3_operand_instruction("multI", $2->temp, "-1", $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(MULTI, $2->temp, "-1", $$->temp));
   }   
 | '!' expr_unary                                        ///////////* 1: NEGATE      *////////////
   {
@@ -599,8 +599,8 @@ expr_unary:
     $$->code = new_program();
 
     concat_programs($$->code, $2->code);
-    push_instruction($$->code, new_2_operand_instruction("loadI", "0", $$->temp));
-    push_instruction($$->code, new_3_operand_instruction("cmp_EQ", $2->temp, $$->temp, $$->temp));
+    push_instruction($$->code, new_2_operand_instruction(LOADI, "0", $$->temp));
+    push_instruction($$->code, new_3_operand_instruction(CMP_EQ, $2->temp, $$->temp, $$->temp));
   }   
 | expr_parentheses                            {$$ = $1;}
 ;
@@ -632,7 +632,7 @@ operands:
     $$->code = new_program();
 
     char* offset_str = get_offset_string(symbol->offset);
-    iloc_instruction_t loadai = new_3_operand_instruction("loadAI", scope, offset_str, $$->temp);
+    iloc_instruction_t loadai = new_3_operand_instruction(LOADAI, scope, offset_str, $$->temp);
     push_instruction($$->code, loadai);
   }
 | TK_LIT_TRUE                                 {$$ = ast_new_lexeme_node($1, BOOL);}
@@ -644,7 +644,7 @@ operands:
     $$->temp = generate_register();
     $$->code = new_program();
 
-    iloc_instruction_t loadi = new_2_operand_instruction("loadI", $1->lexeme, $$->temp);
+    iloc_instruction_t loadi = new_2_operand_instruction(LOADI, $1->lexeme, $$->temp);
     push_instruction($$->code, loadi);
   }
 | TK_LIT_FLOAT                                {$$ = ast_new_lexeme_node($1, FLOAT);}

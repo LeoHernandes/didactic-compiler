@@ -2,7 +2,7 @@
 
 /* ================================== ILOC Operation (instruction) ================================== */
 
-iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest)
+iloc_instruction_t new_1_operand_instruction(iloc_op_code_t op_code, char *dest)
 {
     iloc_instruction_t instruction = {
         .label = NULL,
@@ -14,7 +14,7 @@ iloc_instruction_t new_1_operand_instruction(char *op_code, char *dest)
     return instruction;
 }
 
-iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *dest)
+iloc_instruction_t new_2_operand_instruction(iloc_op_code_t op_code, char *src, char *dest)
 {
     iloc_instruction_t instruction = {
         .label = NULL,
@@ -26,7 +26,7 @@ iloc_instruction_t new_2_operand_instruction(char *op_code, char *src, char *des
     return instruction;
 }
 
-iloc_instruction_t new_3_operand_instruction(char *op_code, char *operand_1, char *operand_2, char *dest)
+iloc_instruction_t new_3_operand_instruction(iloc_op_code_t op_code, char *operand_1, char *operand_2, char *dest)
 {
     iloc_instruction_t instruction = {
         .label = NULL,
@@ -42,63 +42,12 @@ iloc_instruction_t new_label_instruction(char *label)
 {
     iloc_instruction_t instruction = {
         .label = label,
-        .op_code = "nop",
+        .op_code = NOP,
         .operand_1 = NULL,
         .operand_2 = NULL,
         .operand_3 = NULL};
 
     return instruction;
-}
-
-char *_get_arrow_by_op_code(char *op_code)
-{
-    if (strcmp(op_code, "cbr") == 0 ||
-        strcmp(op_code, "jump") == 0 ||
-        strcmp(op_code, "cmp_LT") == 0 ||
-        strcmp(op_code, "cmp_LE") == 0 ||
-        strcmp(op_code, "cmp_EQ") == 0 ||
-        strcmp(op_code, "cmp_GE") == 0 ||
-        strcmp(op_code, "cmp_GT") == 0 ||
-        strcmp(op_code, "cmp_NE") == 0)
-
-    {
-        return "->";
-    }
-    else
-    {
-        return "=>";
-    }
-}
-
-void print_instruction(iloc_instruction_t instruction)
-{
-    char *arrow = _get_arrow_by_op_code(instruction.op_code);
-
-    if (instruction.label != NULL)
-    {
-        printf("%s:", instruction.label);
-    }
-
-    printf(" %s", instruction.op_code);
-
-    if (strcmp(instruction.op_code, "nop") == 0)
-        return;
-
-    if (strcmp(instruction.op_code, "storeAI") == 0 ||
-        strcmp(instruction.op_code, "cbr") == 0)
-    {
-        printf(" %s %s %s, %s", instruction.operand_1, arrow, instruction.operand_2, instruction.operand_3);
-    }
-    else
-    {
-        if (instruction.operand_1 != NULL)
-            printf(" %s", instruction.operand_1);
-
-        if (instruction.operand_2 != NULL)
-            printf(", %s", instruction.operand_2);
-
-        printf(" %s %s", arrow, instruction.operand_3);
-    }
 }
 
 /* ================================== Vector of ILOC operations (program) ================================== */
@@ -147,19 +96,6 @@ void push_instruction(iloc_program_t *program, iloc_instruction_t instruction)
     }
 
     program->instructions[program->length - 1] = instruction;
-}
-
-void print_program(iloc_program_t *program)
-{
-    for (int i = 0; i < program->length; i++)
-    {
-        // iloc doesn't have a return instruction
-        if (strcmp(program->instructions[i].op_code, "ret") != 0)
-        {
-            print_instruction(program->instructions[i]);
-            printf("\n");
-        }
-    }
 }
 
 void free_program_labels(iloc_program_t *program)
