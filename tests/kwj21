@@ -1,0 +1,13 @@
+() >= int ! main
+{
+  int a;
+  int b;
+  a = -3;
+  b = 2;
+  if (a > 0) {
+    b = 3;
+  }else{
+    b = 4;
+  };
+  return b;
+}
