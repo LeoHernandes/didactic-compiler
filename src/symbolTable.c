@@ -133,3 +133,24 @@ symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme)
     }
     return NULL;
 }
+
+char *symbol_table_get_symbol_label_from_offset_or_null(symbol_table_t *table, unsigned int offset)
+{
+    if (table->symbol_count == 0)
+    {
+        return NULL;
+    }
+
+    int pos = 0;
+    symbol_t *current_symbol;
+
+    while (pos < table->symbol_count)
+    {
+        current_symbol = table->symbols[pos];
+        if (current_symbol != NULL && current_symbol->offset == offset)
+        {
+            return current_symbol->lex_data->lexeme;
+        }
+    }
+    return NULL;
+}

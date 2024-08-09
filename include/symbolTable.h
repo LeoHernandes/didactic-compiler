@@ -54,4 +54,6 @@ symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme);
 
 int _hash(symbol_table_t *table, char *lexeme);
 
+char *symbol_table_get_symbol_label_from_offset_or_null(symbol_table_t *table, unsigned int offset);
+
 #endif
