@@ -26,15 +26,14 @@ void print_global_variable_info(char *identifier, int variable_pos)
         identifier, identifier, identifier);
 }
 
-void print_global_variables_info(iloc_program_t *program, table_stack_t *stack)
+void print_global_variables_info(iloc_program_t *program, symbol_table_t *global_table)
 {
-    symbol_table_t *bottom_table = table_stack_peek_bottom(stack);
     symbol_t *current_symbol;
     int variable_pos = 0, table_pos = 0;
 
-    while (variable_pos < bottom_table->symbol_count)
+    while (variable_pos < global_table->symbol_count)
     {
-        current_symbol = bottom_table->symbols[table_pos];
+        current_symbol = global_table->symbols[table_pos];
         if (current_symbol != NULL)
         {
             if (current_symbol->nature == IDENTIFIER_NATURE)
@@ -47,14 +46,14 @@ void print_global_variables_info(iloc_program_t *program, table_stack_t *stack)
     }
 }
 
-void print_data_segment(iloc_program_t *program, table_stack_t *stack)
+void print_data_segment(iloc_program_t *program, symbol_table_t *global_table)
 {
-    print_global_variables_info(program, stack);
+    print_global_variables_info(program, global_table);
     print_main_function_info();
 }
 
-void print_asm(iloc_program_t *program, table_stack_t *stack)
+void print_asm(iloc_program_t *program, symbol_table_t *global_table)
 {
-    print_data_segment(program, stack);
+    print_data_segment(program, global_table);
     // print_code_segment(program);
 }
