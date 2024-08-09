@@ -134,7 +134,7 @@ symbol_t *symbol_table_get_or_null(symbol_table_t *table, char *lexeme)
     return NULL;
 }
 
-char *symbol_table_get_symbol_label_from_offset_or_null(symbol_table_t *table, unsigned int offset)
+char *symbol_table_get_identifier_label_from_offset_or_null(symbol_table_t *table, unsigned int offset)
 {
     if (table->symbol_count == 0)
     {
@@ -147,10 +147,11 @@ char *symbol_table_get_symbol_label_from_offset_or_null(symbol_table_t *table, u
     while (pos < table->symbol_count)
     {
         current_symbol = table->symbols[pos];
-        if (current_symbol != NULL && current_symbol->offset == offset)
+        if (current_symbol != NULL && current_symbol->nature == IDENTIFIER_NATURE && current_symbol->offset == offset)
         {
             return current_symbol->lex_data->lexeme;
         }
+        pos++;
     }
     return NULL;
 }

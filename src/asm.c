@@ -55,5 +55,36 @@ void print_data_segment(iloc_program_t *program, symbol_table_t *global_table)
 void print_asm(iloc_program_t *program, symbol_table_t *global_table)
 {
     print_data_segment(program, global_table);
-    // print_code_segment(program);
+    print_code_segment(program, global_table);
+}
+
+void print_code_segment(iloc_program_t *program, symbol_table_t *global_table)
+{
+    iloc_instruction_t instruction;
+    char *label, *scope, *offset;
+
+    for (int pos = 0; pos < program->length; pos++)
+    {
+        instruction = program->instructions[pos];
+        if (instruction.op_code != NULL &&
+            (strcmp(instruction.op_code, "loadAI") == 0 ||
+             strcmp(instruction.op_code, "storeAI") == 0))
+        {
+            if (strcmp(instruction.op_code, "loadAI") == 0)
+            {
+                scope = instruction.operand_1;
+                offset = instruction.operand_2;
+            }
+            else
+            {
+                scope = instruction.operand_2;
+                offset = instruction.operand_3;
+            }
+            label = symbol_table_get_identifier_label_from_offset_or_null(global_table, (unsigned int)atoi(offset));
+            if (label != NULL)
+            {
+                printf("Global variable %s used in %s instruction with %s offset\n", label, instruction.op_code, offset);
+            }
+        }
+    }
 }
