@@ -141,10 +141,9 @@ char *generate_label()
     return buffer;
 }
 
+static unsigned int register_number = 0;
 char *generate_register()
 {
-    static unsigned int register_number = 0;
-
     // Buffer must store 'r[digits]\0'
     unsigned int buffer_size = number_of_digits(register_number) + 1 + 1;
     char *buffer = malloc(sizeof(char) * buffer_size);
@@ -159,6 +158,11 @@ char *generate_register()
     register_number++;
 
     return buffer;
+}
+
+unsigned int get_iloc_temp_register_quantity()
+{
+    return register_number;
 }
 
 char *get_offset_string(unsigned int offset)

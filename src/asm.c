@@ -10,6 +10,7 @@ void _print_main_function_info()
         "\t.type\tmain, @function\n"
         "main:\n");
 }
+
 void _print_global_variable_info(char *identifier, int variable_pos)
 {
     printf("\t.globl\t%s\n", identifier);
@@ -27,6 +28,18 @@ void _print_global_variable_info(char *identifier, int variable_pos)
         "%s:\n"
         "\t.zero\t4\n", // <== Initialize the 4 byte space with zeros for the variable
         identifier, identifier, identifier);
+}
+
+void _print_pseudo_register_info(int register_number)
+{
+    printf(
+        "\t.globl\t__register_temp_r%d\n"
+        "\t.align 4\n"
+        "\t.type\t__register_temp_r%d, @object\n"
+        "\t.size\t__register_temp_r%d, 4\n"
+        "__register_temp_r%d:\n"
+        "\t.zero\t4\n", // <== Initialize the 4 byte space with zeros for the variable
+        register_number, register_number, register_number, register_number);
 }
 
 void _print_global_variables_info(symbol_table_t *global_table)
@@ -49,9 +62,20 @@ void _print_global_variables_info(symbol_table_t *global_table)
     }
 }
 
+void _print_pseudo_registers()
+{
+    int num_registers = get_iloc_temp_register_quantity();
+
+    for (int i = 0; i < num_registers; i++)
+    {
+        _print_pseudo_register_info(i);
+    }
+}
+
 void _print_data_segment(iloc_program_t *program, symbol_table_t *global_table)
 {
     _print_global_variables_info(global_table);
+    _print_pseudo_registers();
     _print_main_function_info();
 }
 
@@ -98,20 +122,28 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     {
         char *scope = instruction.operand_1;
         char *offset = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
         if (strcmp(scope, "rbss") == 0)
         {
             char *label = symbol_table_get_identifier_label_from_offset_or_null(global_table, (unsigned int)atoi(offset));
-            printf("movl\t%s(%%rip), %%edx", label);
+            printf("movl    %s(%%rip), %%edx\n", label);
+            printf("movl    %%edx, __register_temp_%s(%%rip)\n", temp_register);
         }
         else
         {
-            printf("movl\t-%s(%%rbp), %%eax", offset);
+            printf("movl    -%s(%%rbp), %%edx", offset);
+            printf("movl    %%edx, __register_temp_%s(%%rip)\n", temp_register);
         }
         break;
     }
     case LOADI:
+    {
+        char *immediate_value = instruction.operand_1;
+        char *temp_register = instruction.operand_3;
+        printf("movl    $%s, %%edx\n", immediate_value);
+        printf("movl    %%edx, __register_temp_%s(%%rip)\n", temp_register);
         break;
-
+    }
     case MULT:
         break;
 
@@ -125,7 +157,7 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
 
     case RET:
-        break;
+        printf("ret\n");
 
     case STOREAI:
         break;

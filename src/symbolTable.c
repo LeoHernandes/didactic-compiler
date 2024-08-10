@@ -6,7 +6,7 @@ symbol_t *symbol_new(nature_t nature, data_type_t type, lexical_data_t *lex_data
     symbol->nature = nature;
     symbol->type = type;
     symbol->lex_data = lex_data;
-    symbol->offset = 0;
+    symbol->offset = 4;
 
     return symbol;
 }

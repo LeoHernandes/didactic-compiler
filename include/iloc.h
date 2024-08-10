@@ -71,5 +71,6 @@ void free_program_labels(iloc_program_t *program);
 char *generate_label();
 char *generate_register();
 char *get_offset_string(unsigned int offset);
+unsigned int get_iloc_temp_register_quantity();
 
 #endif
