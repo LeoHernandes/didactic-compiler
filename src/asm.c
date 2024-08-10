@@ -166,9 +166,13 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
 
     case RET:
+    {
+        char *return_temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", return_temp_register);
         printf("\tpopq    %%rbp\n");
         printf("\tret\n");
         break;
+    }
 
     case STOREAI:
     {

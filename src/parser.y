@@ -326,6 +326,7 @@ return_command:
     $$ = ast_new_node("return", $2->type);
     ast_add_child($$, $2);
     $$->code = new_program();
+    concat_programs($$->code, $2->code);
     push_instruction($$->code, new_1_operand_instruction(RET, $2->temp));
   }
 ;
