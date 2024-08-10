@@ -95,19 +95,20 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
 
     case LOADAI:
+    {
         char *scope = instruction.operand_1;
         char *offset = instruction.operand_2;
         if (strcmp(scope, "rbss") == 0)
         {
             char *label = symbol_table_get_identifier_label_from_offset_or_null(global_table, (unsigned int)atoi(offset));
-            printf("movl\t%s(\%rip), \%edx", label);
+            printf("movl\t%s(%%rip), %%edx", label);
         }
         else
         {
-            printf("movl\t-%s(%rbp), %eax", offset);
+            printf("movl\t-%s(%%rbp), %%eax", offset);
         }
         break;
-
+    }
     case LOADI:
         break;
 
