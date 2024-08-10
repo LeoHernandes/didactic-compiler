@@ -1,0 +1,10 @@
+ loadI 923 => r0
+ loadI 0 => r2
+ cmp_EQ r0, r2 -> r1
+ storeAI r1 => rbss, 0
+ loadI 456 => r3
+ storeAI r3 => rfp, 4
+ loadAI rbss, 0 => r4
+ loadAI rfp, 4 => r5
+ add r4, r5 => r6
+ storeAI r6 => rfp, 0

@@ -8,7 +8,9 @@ void _print_main_function_info()
         "\t.text\n"
         "\t.globl\tmain\n"
         "\t.type\tmain, @function\n"
-        "main:\n");
+        "main:\n"
+        "pushq\t%%rbp\n"
+        "movq\t%%rsp, %%rbp\n");
 }
 
 void _print_global_variable_info(char *identifier, int variable_pos)
