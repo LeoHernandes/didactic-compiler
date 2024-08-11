@@ -13,23 +13,16 @@ void _print_main_function_info()
         "\tmovq\t%%rsp, %%rbp\n");
 }
 
-void _print_global_variable_info(char *identifier, int variable_pos)
+void _print_global_variable_info(char *identifier)
 {
-    printf("\t.globl\t%s\n", identifier);
-
-    if (variable_pos == 0)
-    {
-        printf("\t.bss\n"); // <== Block Starting Symbol: portion of an asm code that contains statically
-                            //     allocated variables that have not been assigned a value yet
-    }
-
     printf(
+        "\t.globl\t%s\n"
         "\t.align 4\n"
         "\t.type\t%s, @object\n"
         "\t.size\t%s, 4\n"
         "%s:\n"
         "\t.zero\t4\n", // <== Initialize the 4 byte space with zeros for the variable
-        identifier, identifier, identifier);
+        identifier, identifier, identifier, identifier);
 }
 
 void _print_pseudo_register_info(int register_number)
@@ -47,18 +40,17 @@ void _print_pseudo_register_info(int register_number)
 void _print_global_variables_info(symbol_table_t *global_table)
 {
     symbol_t *current_symbol;
-    int variable_pos = 0, table_pos = 0;
+    int table_pos = 0;
 
-    while (variable_pos < global_table->symbol_count)
+    while (table_pos < global_table->symbol_count)
     {
         current_symbol = global_table->symbols[table_pos];
         if (current_symbol != NULL)
         {
             if (current_symbol->nature == IDENTIFIER_NATURE)
             {
-                _print_global_variable_info(current_symbol->lex_data->lexeme, variable_pos);
+                _print_global_variable_info(current_symbol->lex_data->lexeme);
             }
-            variable_pos++;
         }
         table_pos++;
     }
@@ -215,6 +207,8 @@ void print_asm(iloc_program_t *program, symbol_table_t *global_table)
 {
     printf("\t.file\t\"etapa6.c\"\n");
     printf("\t.text\n");
+    printf("\t.bss\n"); // <== Block Starting Symbol: portion of an asm code that contains statically
+                        //     allocated variables that have not been assigned a value yet
 
     _print_data_segment(program, global_table);
     _print_code_segment(program, global_table);
