@@ -121,22 +121,82 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     }
 
     case CMP_EQ:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsete    %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CMP_GE:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsetge   %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CMP_GT:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsetg    %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CMP_LE:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsetle   %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CMP_LT:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsetl    %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CMP_NE:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tcmpl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tsetne   %%al\n");
+        printf("\tmovzbl  %%al, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case DIV:
     {
