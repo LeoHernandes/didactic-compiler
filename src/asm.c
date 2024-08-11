@@ -110,7 +110,15 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     }
 
     case CBR:
+    {
+        char *boolean_op = instruction.operand_1;
+        char *true_label = instruction.operand_2;
+        char *false_label = instruction.operand_3;
+        printf("\tcmpl    $0, __register_temp_%s(%%rip)\n", boolean_op);
+        printf("\tje      %s\n", false_label);
+        printf("\tjne     %s\n", true_label);
         break;
+    }
 
     case CMP_EQ:
         break;
