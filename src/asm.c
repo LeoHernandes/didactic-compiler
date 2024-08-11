@@ -212,7 +212,11 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     }
 
     case JUMPI:
+    {
+        char *label = instruction.operand_3;
+        printf("\tjmp    %s", label);
         break;
+    }
     case LOADAI:
     {
         char *scope = instruction.operand_1;
