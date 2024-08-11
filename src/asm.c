@@ -139,7 +139,17 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
 
     case DIV:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tmovl    __register_temp_%s(%%rip), %%ecx\n", right_op);
+        printf("\tcltd\n");
+        printf("\tidivl   %%ecx\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case JUMPI:
         break;
@@ -238,6 +248,13 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     }
 
     case SUB:
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%edx\n", right_op);
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\tsubl    %%edx, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
     }
 }
