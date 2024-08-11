@@ -94,10 +94,20 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", right_op);
         printf("\taddl    %%edx, %%eax\n");
         printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
+        break;
     }
 
     case AND:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%edx\n", left_op);
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tand     %%edx, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case CBR:
         break;
@@ -161,7 +171,16 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
 
     case OR:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%edx\n", left_op);
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tor      %%edx, %%eax\n");
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case RET:
     {
