@@ -218,4 +218,7 @@ void print_asm(iloc_program_t *program, symbol_table_t *global_table)
 
     _print_data_segment(program, global_table);
     _print_code_segment(program, global_table);
+
+    printf("\t.size\tmain, .-main\n");
+    printf("\t.section\t.note.GNU-stack,\"\",@progbits\n");
 }
