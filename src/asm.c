@@ -214,7 +214,7 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
     case JUMPI:
     {
         char *label = instruction.operand_3;
-        printf("\tjmp    %s", label);
+        printf("\tjmp    %s\n", label);
         break;
     }
     case LOADAI:
