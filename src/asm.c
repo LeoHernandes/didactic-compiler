@@ -162,13 +162,32 @@ void _print_instruction(iloc_instruction_t instruction, symbol_table_t *global_t
         break;
     }
     case MULT:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\timull   __register_temp_%s(%%rip), %%eax\n", right_op);
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case MULTI:
+    {
+        char *left_op = instruction.operand_1;
+        char *right_op = instruction.operand_2;
+        char *temp_register = instruction.operand_3;
+        printf("\tmovl    __register_temp_%s(%%rip), %%eax\n", left_op);
+        printf("\timull   $%s, %%eax\n", right_op);
+        printf("\tmovl    %%eax, __register_temp_%s(%%rip)\n", temp_register);
         break;
+    }
 
     case NOP:
+    {
+        printf("%s:\n", instruction.label);
         break;
+    }
 
     case OR:
     {
