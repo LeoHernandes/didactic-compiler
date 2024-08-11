@@ -56,10 +56,8 @@ void _print_global_variables_info(symbol_table_t *global_table)
     }
 }
 
-void _print_pseudo_registers()
+void _print_pseudo_registers(int num_registers)
 {
-    int num_registers = get_iloc_temp_register_quantity();
-
     for (int i = 0; i < num_registers; i++)
     {
         _print_pseudo_register_info(i);
@@ -68,8 +66,16 @@ void _print_pseudo_registers()
 
 void _print_data_segment(iloc_program_t *program, symbol_table_t *global_table)
 {
+    int num_registers = get_iloc_temp_register_quantity();
+
+    if (global_table->symbol_count > 0 || num_registers > 0)
+    {
+        printf("\t.bss\n"); // <== Block Starting Symbol: portion of an asm code that contains statically
+                            //     allocated variables that have not been assigned a value yet
+    }
+
     _print_global_variables_info(global_table);
-    _print_pseudo_registers();
+    _print_pseudo_registers(num_registers);
     _print_main_function_info();
 }
 
@@ -207,8 +213,6 @@ void print_asm(iloc_program_t *program, symbol_table_t *global_table)
 {
     printf("\t.file\t\"etapa6.c\"\n");
     printf("\t.text\n");
-    printf("\t.bss\n"); // <== Block Starting Symbol: portion of an asm code that contains statically
-                        //     allocated variables that have not been assigned a value yet
 
     _print_data_segment(program, global_table);
     _print_code_segment(program, global_table);
