@@ -1,0 +1,35 @@
+int a,
+int c,
+() | int / main
+{
+  a = 10,
+  c = 40,
+  int b,
+  int d,
+  int e,
+  b = 200,
+
+  if (a > 0)
+  {
+    while (b == 2 & a > 5)
+    {
+      a = a - 1,
+      c = c + 1,
+    },
+  }
+  else {
+      c = 4,
+  },
+
+  d = a + c * 2 / b,
+  while (d > 0 | b > 100)
+  {
+    d = d - 1,
+    if(a > 5)
+    {
+      b = b + 1,
+    },
+  },
+
+  return c,
+}

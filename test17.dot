@@ -1,6 +1,0 @@
-digraph etapa7 {
-line_1 -> L0;
-line_1 -> L1;
-L0 -> L2;
-L1 -> L2;
-}

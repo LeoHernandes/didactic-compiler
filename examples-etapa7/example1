@@ -1,0 +1,19 @@
+() | int / main
+{
+  int a,
+  int c,
+  int b,
+  a = 10,
+  c = 0,
+  b = 2,
+  while (b == 2 & a > 5) {
+    a = a - 1,
+    c = c + 1,
+  },
+  if (a > 0) {
+    b = 3,
+  }else{
+    b = 4,
+  },
+  return c,
+}
