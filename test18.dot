@@ -1,0 +1,10 @@
+digraph etapa7 {
+line_1 -> L0;
+L0 -> L1;
+L0 -> L2;
+L1 -> L0;
+L2 -> L3;
+L2 -> L4;
+L3 -> L5;
+L4 -> L5;
+}
