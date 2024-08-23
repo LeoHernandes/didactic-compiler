@@ -8,7 +8,7 @@ CDIR=src
 
 # Project's configurable macros ===============================
 # WARNING! Change this at every deploy
-PROJECT = etapa6
+PROJECT = etapa7
 
 # You MUST list all header files here
 _DEPS = parser.tab.h ast.h dataType.h symbolTable.h tableStack.h semanticErrors.h iloc.h asm.h

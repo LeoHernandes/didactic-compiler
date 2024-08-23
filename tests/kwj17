@@ -1,14 +1,15 @@
+int a,
+int c,
 () | int / main
 {
-  int a,
-  int b,
-  int c,
-  a = 10,
-  b = 2,
-  c = 0,
-  while (a > 5) {
-    a = a - 1,
-    c = c + 1,
-  },
+  if (a > 0)
+  {
+    c = 3,
+  }
+  else
+  {
+    c = 4,
+  }
+  ,
   return c,
 }

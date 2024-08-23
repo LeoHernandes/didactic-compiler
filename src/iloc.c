@@ -1,5 +1,8 @@
 #include "iloc.h"
 
+#define str(x) #x
+#define enum_to_str(x) str(x)
+
 /* ================================== ILOC Operation (instruction) ================================== */
 
 iloc_instruction_t new_1_operand_instruction(iloc_op_code_t op_code, char *dest)
@@ -106,6 +109,42 @@ void free_program_labels(iloc_program_t *program)
         if (label != NULL)
             free(label);
     }
+}
+
+void print_xdot_graph(iloc_program_t *program)
+{
+    printf("digraph etapa7 {\n");
+    iloc_instruction_t first_instruction = program->instructions[0];
+    iloc_instruction_t current_instruction;
+    char *start = first_instruction.label != NULL ? first_instruction.label : "line_    1";
+    int is_last_jump = 0;
+
+    for (int i = 1; i < program->length; i++)
+    {
+        current_instruction = program->instructions[i];
+        if (current_instruction.label != NULL)
+        {
+            if (!is_last_jump)
+            {
+                printf("%s -> %s;\n", start, current_instruction.label);
+            }
+            is_last_jump = 0;
+            start = current_instruction.label;
+        }
+        else if (current_instruction.op_code == JUMPI)
+        {
+            printf("%s -> %s;\n", start, current_instruction.operand_3);
+            is_last_jump = 1;
+        }
+        // cbr operand_1 -> operand_2, operand_3
+        // the first link (operand_2) is printed by the label condition
+        else if (current_instruction.op_code == CBR)
+        {
+            printf("%s -> %s;\n", start, current_instruction.operand_3);
+        }
+    }
+
+    printf("}");
 }
 
 /* ================================== Auxiliar functions ================================== */

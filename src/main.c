@@ -24,8 +24,7 @@ int main(int argc, char **argv)
   {
     if (ast_root->code != NULL)
     {
-      symbol_table_t *global_table = table_stack_peek_bottom(table_stack);
-      print_asm(ast_root->code, global_table);
+      print_xdot_graph(ast_root->code);
       free_program_labels(ast_root->code);
     }
     ast_free(ast_root);
